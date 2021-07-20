@@ -63,7 +63,7 @@ class ModelTest(TestCase):
         identity_card = "J-12345678-9"
         name = "Business Test Name"
         address = "Once whwere a shop that put to sea the name of the ship was the belly of tea"
-        Phone = "+58 412-1234567"
+        phone = "+58412-1234567"
 
         client = models.Client.objects.create(
             identity_card=identity_card,
@@ -73,3 +73,12 @@ class ModelTest(TestCase):
         )
 
         self.assertEqual(client.name, name)
+
+    def test_new_category(self):
+        """
+        Create a new Category
+        """
+        name = "Test Category"
+        category = models.Category.objects.create(name=name)
+
+        self.assertEqual(category.name, name)
