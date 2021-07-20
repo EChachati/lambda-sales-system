@@ -43,3 +43,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
     USERNAME_FIELD = 'email'
+
+
+class Salesman(models.Model):
+    """
+    Salesman Model
+    """
+    identity_card = models.CharField(max_length=15, blank=False)
+    name = models.CharField(max_length=50, blank=False)
+    image = models.ImageField(
+        upload_to='salesman',
+        blank=True,
+        null=True
+    )
