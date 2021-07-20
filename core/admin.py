@@ -32,6 +32,7 @@ class UserAdmin(BaseUserAdmin):
         (_('Personal Information'), {
             "fields": (
                 _('name'),
+                _('identity_card')
             )
         }),
         (_('Permissions'), {
