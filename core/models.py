@@ -56,3 +56,24 @@ class Salesman(models.Model):
         blank=True,
         null=True
     )
+
+
+class Client(models.Model):
+    """
+    Client Model
+    """
+    identity_card = models.CharField(max_length=15, blank=False)
+    name = models.CharField(max_length=50, blank=False)
+    image = models.ImageField(
+        upload_to='client',
+        blank=True,
+        null=True
+    )
+    address = models.CharField(max_length=255, blank=False)
+    phone = models.CharField(max_length=15, blank=False)
+    purchases = models.PositiveIntegerField(default=0)
+    money_spent = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )

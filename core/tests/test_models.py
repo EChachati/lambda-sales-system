@@ -54,3 +54,22 @@ class ModelTest(TestCase):
         )
 
         self.assertEqual(salesman.name, name)
+
+    def test_new_client_(self):
+        """
+        Create a client
+        """
+
+        identity_card = "J-12345678-9"
+        name = "Business Test Name"
+        address = "Once whwere a shop that put to sea the name of the ship was the belly of tea"
+        Phone = "+58 412-1234567"
+
+        client = models.Client.objects.create(
+            identity_card=identity_card,
+            name=name,
+            address=address,
+            phone=phone
+        )
+
+        self.assertEqual(client.name, name)
