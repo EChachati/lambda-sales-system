@@ -2,6 +2,42 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
 
+import datetime
+
+
+def sample_salesman(name="SalesmanName", identity_card="J-303795579"):
+
+    return models.Salesman.objects.create(
+        name=name,
+        identity_card=identity_card
+    )
+
+
+def sample_client(identity_card="J-12345678-9", name="Business Test Name", address="Address Test 69", phone="+58412-1234567"):
+    return models.Client.objects.create(
+        identity_card=identity_card,
+        name=name,
+        address=address,
+        phone=phone
+    )
+
+
+def sample_category(name="Test Category"):
+    return models.Category.objects.create(name=name)
+
+
+def sample_product(name="Test Product", category=sample_category()):
+    return models.Product.objects.create(name=name, category=category)
+
+
+def sample_sale():
+    salesman = sample_salesman()
+    client = sample_client()
+    return models.Sale.objects.create(
+        salesman=salesman,
+        client=client
+    )
+
 
 class ModelTest(TestCase):
     """
@@ -82,3 +118,64 @@ class ModelTest(TestCase):
         category = models.Category.objects.create(name=name)
 
         self.assertEqual(category.name, name)
+
+    def test_new_product(self):
+        """
+        Create a new Product
+        """
+        name = 'new_product'
+        category = models.Category.objects.create(name="category")
+        product = models.Product.objects.create(name=name, category=category)
+
+        self.assertEqual(product.category, category)
+        self.assertEqual(product.name, name)
+
+    def test_new_barcode(self):
+        """
+        Create a new Barcode
+        """
+        name = 'new_product'
+        category = models.Category.objects.create(name="category")
+        product = models.Product.objects.create(name=name, category=category)
+
+        code = "759123456789"
+        barcode = models.Barcode.objects.create(
+            code=code,
+            product=product
+        )
+        self.assertEqual(barcode.code, code)
+        self.assertEqual(barcode.product, product)
+
+    def test_new_sale(self):
+        """
+        Create a new sale
+        """
+        salesman = sample_salesman()
+        client = sample_client()
+        sale = models.Sale.objects.create(
+            salesman=salesman,
+            client=client
+        )
+
+        self.assertEqual(sale.date, datetime.date.today())
+        self.assertEqual(sale.salesman, salesman)
+        self.assertEqual(sale.client, client)
+
+    def test_new_product_sale(self):
+        """
+        Create ProductSale
+        """
+        category = sample_category()
+        product = sample_product(category=category)
+        product.price_1 = 5.00
+        quantity = 5
+        sale = sample_sale()
+
+        productSale = models.ProductSale.objects.create(
+            product=product,
+            sale=sale,
+            quantity=quantity,
+            income=product.price_1*quantity
+        )
+
+        self.assertEqual(productSale.product, product)

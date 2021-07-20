@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
 
+import datetime
+
 
 class UserManager(BaseUserManager):
     """
@@ -82,8 +84,106 @@ class Client(models.Model):
 class Category(models.Model):
     """
     Product Category
+
+    In case you want to delete a Category
+    if you have a product in that category you will not be able to delete it
     """
     name = models.CharField(max_length=50, blank=False)
 
     def __str__(self):
         return self.name
+
+
+class Product(models.Model):
+    """
+    Product Item Model
+
+    FK -> Category
+    """
+    name = models.CharField(max_length=50, blank=False)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.RESTRICT
+    )
+    description = models.CharField(max_length=144, blank=True)
+    presentation = models.CharField(max_length=3, blank=True)
+    cost = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+    price_1 = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+    price_2 = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+    price_3 = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+    brand = models.CharField(max_length=32, blank=True)
+
+    image = models.ImageField(
+        upload_to='product',
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        self.name
+
+
+class Barcode(models.Model):
+    """
+    Product Barcodes
+
+    FK -> Product
+    """
+    code = models.CharField(max_length=32, blank=False)
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE
+    )
+
+
+class Sale(models.Model):
+    """
+    Sales
+    """
+
+    salesman = models.ForeignKey(
+        Salesman,
+        on_delete=models.RESTRICT
+    )
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.RESTRICT
+    )
+    income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    product = models.ManyToManyField(
+        Product,
+        through='ProductSale'
+    )
+    description = models.CharField(max_length=255, blank=True)
+    date = models.DateField(default=datetime.date.today)
+
+
+class ProductSale(models.Model):
+    """
+    Table in between Products per Sale
+    """
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE
+    )
+    sale = models.ForeignKey(
+        Sale, on_delete=models.CASCADE
+    )
+    quantity = models.IntegerField(default=1)
+    income = models.DecimalField(max_digits=15, decimal_places=2)
