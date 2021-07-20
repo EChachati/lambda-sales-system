@@ -41,3 +41,16 @@ class ModelTest(TestCase):
         """
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user(None, "Password.123")
+
+    def test_new_salesman(self):
+        """
+        Create a Salesman
+        """
+        name = "SalesmanName"
+        identity_card = "J-303795579"
+        salesman = models.Salesman.objects.create(
+            name=name,
+            identity_card=identity_card,
+        )
+
+        self.assertEqual(salesman.name, name)
