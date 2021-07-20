@@ -22,3 +22,22 @@ class ModelTest(TestCase):
 
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
+
+    def test_new_user_email_normalized(self):
+        """
+        Make sure email is saved lowercased
+        """
+        email = "Test@ExaMPLE.com"
+        password = "Password.123"
+        user = get_user_model().objects.create_user(
+            email=email,
+            password=password
+        )
+        self.assertEqual(user.email, email.lower())
+
+    def test_new_user_with_invalid_email(self):
+        """
+        Make sure dies not create user with an invalid email
+        """
+        with self.assertRaises(ValueError):
+            get_user_model().objects.create_user(None, "Password.123")
