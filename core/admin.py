@@ -58,4 +58,43 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
+class SalesmanAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'identity_card')
+
+
+class ClientAdmin(admin.ModelAdmin):
+    list_display = ('name', 'identity_card', 'purchases', 'money_spent')
+    ordering = ('-name', )
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'presentation',
+                    'cost', 'price_1', 'price_2', 'price_3')
+    ordering = ('-name',)
+
+
+class BarcodeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'product')
+
+
+class SaleAdmin(admin.ModelAdmin):
+    list_display = ('id', _('client'), _('salesman'), _('income'), _('date'))
+
+
+class ProductSaleAdmin(admin.ModelAdmin):
+    list_display = ('sale', 'product', 'quantity', 'income')
+    ordering = ('-sale', )
+
+
 admin.site.register(User, UserAdmin)
+admin.site.register(Salesman, SalesmanAdmin)
+admin.site.register(Client, ClientAdmin)
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Product, ProductAdmin)
+admin.site.register(Barcode, BarcodeAdmin)
+admin.site.register(Sale, SaleAdmin)
+admin.site.register(ProductSale, ProductSaleAdmin)

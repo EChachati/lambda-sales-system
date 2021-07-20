@@ -59,6 +59,9 @@ class Salesman(models.Model):
         null=True
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Client(models.Model):
     """
@@ -79,6 +82,9 @@ class Client(models.Model):
         decimal_places=2,
         default=0.00
     )
+
+    def __str__(self):
+        return self.name
 
 
 class Category(models.Model):
@@ -136,7 +142,7 @@ class Product(models.Model):
     )
 
     def __str__(self):
-        self.name
+        return self.name
 
 
 class Barcode(models.Model):
@@ -150,6 +156,9 @@ class Barcode(models.Model):
         Product,
         on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return self.code
 
 
 class Sale(models.Model):
@@ -172,6 +181,9 @@ class Sale(models.Model):
     )
     description = models.CharField(max_length=255, blank=True)
     date = models.DateField(default=datetime.date.today)
+
+    def __str__(self):
+        return str(self.id)
 
 
 class ProductSale(models.Model):

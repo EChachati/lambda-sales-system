@@ -22,11 +22,7 @@ def sample_client(identity_card="J-12345678-9", name="Business Test Name", addre
     )
 
 
-def sample_category(name="Test Category"):
-    return models.Category.objects.create(name=name)
-
-
-def sample_product(name="Test Product", category=sample_category()):
+def sample_product(category, name="Test Product"):
     return models.Product.objects.create(name=name, category=category)
 
 
@@ -43,6 +39,9 @@ class ModelTest(TestCase):
     """
     Tests for models
     """
+
+    def setUp(self):
+        self.category = models.Category.objects.create(name='DefaultName')
 
     def test_create_user_with_email_success(self):
         """
@@ -165,7 +164,7 @@ class ModelTest(TestCase):
         """
         Create ProductSale
         """
-        category = sample_category()
+        category = self.category
         product = sample_product(category=category)
         product.price_1 = 5.00
         quantity = 5
