@@ -169,6 +169,7 @@ class Barcode(models.Model):
     code = models.CharField(max_length=32, blank=False)
     product = models.ForeignKey(
         Product,
+        related_name="barcode",
         on_delete=models.CASCADE
     )
 
