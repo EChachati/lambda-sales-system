@@ -5,7 +5,7 @@ from core.models import Product, Category, Barcode
 
 class BarcodeSerializer(serializers.ModelSerializer):
     """
-    Barcodes per Product
+    All Barcodes per Product
     """
     class Meta:
         model = Barcode
