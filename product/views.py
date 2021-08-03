@@ -34,6 +34,8 @@ class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Cre
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
 
+# TODO add auth
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -41,3 +43,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
+
+
+class BarcodeViewSet(viewsets.ModelViewSet):
+    """
+    Manage Barcodes in Database
+    """
+    queryset = Barcode.objects.all()
+    serializer_class = serializers.BarcodeSerializer
