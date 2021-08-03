@@ -166,12 +166,13 @@ class Barcode(models.Model):
 
     FK -> Product
     """
-    code = models.CharField(max_length=32, blank=False)
     product = models.ForeignKey(
         Product,
         related_name="barcode",
         on_delete=models.CASCADE
     )
+    code = models.CharField(max_length=32, blank=False)
+    description = models.CharField(max_length=32, blank=False)
 
     def __str__(self):
         return self.code

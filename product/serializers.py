@@ -9,7 +9,16 @@ class BarcodeSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Barcode
-        fields = ('code', 'product')
+        fields = ('id', 'product', 'description', 'code')
+
+
+class CodeSerializer(serializers.ModelSerializer):
+    """
+    Barcode Serializer just display the code, used in ProductSerializer
+    """
+    class Meta:
+        model = Barcode
+        fields = ('description', 'code',)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -26,7 +35,7 @@ class ProductSerializer(serializers.ModelSerializer):
     """
     Serializer for Product Object
     """
-    barcode = BarcodeSerializer(many=True)
+    barcode = CodeSerializer(many=True)
 
     class Meta:
         model = Product
