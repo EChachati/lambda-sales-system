@@ -10,8 +10,8 @@ class BaseViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateM
     """
     Base Atributes for ViewSets
     """
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         """
@@ -26,7 +26,8 @@ class BaseViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateM
         serializer.save(user=self.request.user)
 
 
-class CategoryViewSet(BaseViewSet):
+# TODO heritage from baseViewSet, Fix User Auth
+class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
     """
     Manage category in database
     """

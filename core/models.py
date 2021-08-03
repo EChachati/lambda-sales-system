@@ -53,10 +53,25 @@ class Salesman(models.Model):
     """
     identity_card = models.CharField(max_length=15, blank=False)
     name = models.CharField(max_length=50, blank=False)
+
     image = models.ImageField(
         upload_to='salesman',
         blank=True,
         null=True
+    )
+    phone_1 = models.CharField(max_length=15, blank=True)
+    phone_2 = models.CharField(max_length=15, blank=True)
+
+    purchases = models.PositiveIntegerField(default=0)
+    money_generated = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+    biggest_sell = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
     )
 
     def __str__(self):
