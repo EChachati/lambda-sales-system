@@ -5,8 +5,8 @@ from product import views
 
 router = DefaultRouter()
 router.register('category', views.CategoryViewSet)
-router.register('', views.ProductViewSet)
 router.register('barcode', views.BarcodeViewSet)
+router.register('', views.ProductViewSet)
 
 app_name = 'product'
 

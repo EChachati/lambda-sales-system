@@ -10,3 +10,11 @@ class SaleViewSet(viewsets.ModelViewSet):
     """
     queryset = Sale.objects.all()
     serializer_class = serializers.SaleSerializer
+
+
+class PSViewSet(viewsets.ModelViewSet):
+    """
+    Manage Product Sales in Database
+    """
+    queryset = ProductSale.objects.all()
+    serializer_class = serializers.ProductSaleSerializer
