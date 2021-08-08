@@ -12,7 +12,7 @@ class SaleViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.SaleSerializer
 
 
-class PSViewSet(viewsets.ModelViewSet):
+class ProductSaleViewSet(viewsets.ModelViewSet):
     """
     Manage Product Sales in Database
     """
