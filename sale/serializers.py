@@ -1,14 +1,22 @@
 from rest_framework import serializers
 from core.models import Sale, ProductSale, Product
 
+from product.serializers import ProductSerializer as OriginalProductSerializer
+from product.serializers import CategorySerializer
+from salesman.serializers import SalesmanSerializer
+from client.serializers import ClientSerializer
+
 
 class ProductSerializer(serializers.ModelSerializer):
     """
     Serializer used in sale for Product
     """
+
     class Meta:
         model = Product
         fields = '__all__'
+
+    category = CategorySerializer()
 
     def serialize_sale_data(self, product_instance):
         """
@@ -24,7 +32,7 @@ class ProductSerializer(serializers.ModelSerializer):
             ).first()
 
         if ProductSale_instance:
-            return ProductSaleSerializer(ProductSale_instance).data
+            return ReducedProductSaleSerializer(ProductSale_instance).data
         return {}
 
     def to_representation(self, instance):
@@ -32,10 +40,29 @@ class ProductSerializer(serializers.ModelSerializer):
         return {**rep, **self.serialize_sale_data(instance)}
 
 
+class ReducedProductSaleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductSale
+        fields = ('quantity', 'income')
+
+
 class ProductSaleSerializer(serializers.ModelSerializer):
     """
     Product-Sale Serializer
     """
+
+    class ReducedSaleSerializer(serializers.ModelSerializer):
+        salesman = SalesmanSerializer()
+        client = ClientSerializer()
+
+        class Meta:
+            model = Sale
+            fields = ('id', 'salesman', 'client',
+                      'date', 'description')
+
+    #product = OriginalProductSerializer()
+    #sale = ReducedSaleSerializer()
+
     class Meta:
         model = ProductSale
         fields = ('product', 'sale', 'quantity', 'income')
@@ -59,14 +86,3 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = '__all__'
-
-    def create(self, validated_data):
-        import pdb
-        pdb.set_trace()
-
-        products_data = validated_data.pop('products')
-        sale = Sale.objects.create(**validated_data)
-        for product_data in products_data:
-            ProductSale.objects.create(**validated_data)
-
-        return sale

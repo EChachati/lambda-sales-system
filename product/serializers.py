@@ -36,10 +36,9 @@ class ProductSerializer(serializers.ModelSerializer):
             fields = ('description', 'code',)
 
     barcode = CodeSerializer(many=True)
-    category = CategorySerializer()
+    #category = CategorySerializer()
 
     class Meta:
         model = Product
         fields = '__all__'
-#        ('id', 'name', 'category', 'description', 'cost', 'price_1', 'price_2', 'price_3', 'brand', 'image', 'barcode')
         read_only_fields = ('id',)
