@@ -62,18 +62,6 @@ class Salesman(models.Model):
     phone_1 = models.CharField(max_length=15, blank=True)
     phone_2 = models.CharField(max_length=15, blank=True)
 
-    purchases = models.PositiveIntegerField(default=0)
-    money_generated = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0.00
-    )
-    biggest_sell = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0.00
-    )
-
     def __str__(self):
         return self.name
 
@@ -216,3 +204,28 @@ class ProductSale(models.Model):
     )
     quantity = models.IntegerField(default=1)
     income = models.DecimalField(max_digits=15, decimal_places=2)
+
+
+class SalesmanIndicators(models.Model):
+    salesman = models.OneToOneField(
+        Salesman,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
+
+    biggest_sale = models.OneToOneField(
+        Sale,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    purchases = models.PositiveIntegerField(default=0)
+
+    money_generated = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+
+    def __str__(self):
+        return str(self.salesman)

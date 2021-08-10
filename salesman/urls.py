@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from salesman import views
 
 router = DefaultRouter()
+router.register('indicator', views.SalesmanIndicatorsViewSet)
 router.register('', views.SalesmanViewSet)
 
 app_name = 'salesman'
