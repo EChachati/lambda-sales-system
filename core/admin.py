@@ -90,7 +90,7 @@ class ProductSaleAdmin(admin.ModelAdmin):
     ordering = ('-sale', )
 
 
-admin.site.register(User, UserAdmin)
+# admin.site.register(User, UserAdmin)
 admin.site.register(Salesman, SalesmanAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Category, CategoryAdmin)
