@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from core.models import Sale, ProductSale, Salesman, Client
+from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators
 from sale import serializers
 
 import decimal
@@ -22,9 +22,16 @@ class SaleViewSet(viewsets.ModelViewSet):
         income = request.data['income']
 
         salesman = Salesman.objects.get(pk=request.data['salesman'])
-        salesman.purchases += 1
-        salesman.money_generated += decimal.Decimal(income)
-        salesman.save()
+
+        salesman_indicator = SalesmanIndicators.objects.get(pk=salesman)
+
+        salesman_indicator.purchases += 1
+        salesman_indicator.money_generated += decimal.Decimal(income)
+
+        if income > salesman_indicator.biggest_sale.income:
+            salesman_indicator.biggest_sale = instance
+
+        salesman_indicator.save()
 
         client = Client.objects.get(pk=request.data['client'])
         client.purchases += 1
