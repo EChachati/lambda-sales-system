@@ -51,21 +51,17 @@ class ProductSaleSerializer(serializers.ModelSerializer):
     Product-Sale Serializer
     """
 
-    class ReducedSaleSerializer(serializers.ModelSerializer):
-        salesman = SalesmanSerializer()
-        client = ClientSerializer()
-
-        class Meta:
-            model = Sale
-            fields = ('id', 'salesman', 'client',
-                      'date', 'description')
-
-    #product = OriginalProductSerializer()
-    #sale = ReducedSaleSerializer()
-
     class Meta:
         model = ProductSale
         fields = ('product', 'sale', 'quantity', 'income')
+
+    def to_representation(self, value):
+        """
+        """
+        data = super().to_representation(value)
+        product = OriginalProductSerializer(value.product)
+        data['product'] = product.data
+        return data
 
 
 class SaleSerializer(serializers.ModelSerializer):
@@ -86,3 +82,14 @@ class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
         fields = '__all__'
+
+    def to_representation(self, value):
+        """
+        Adding Salesman and Client representation
+        """
+        data = super().to_representation(value)
+        salesman = SalesmanSerializer(value.salesman)
+        client = ClientSerializer(value.client)
+        data['salesman'] = salesman.data
+        data['client'] = client.data
+        return data
