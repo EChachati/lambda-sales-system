@@ -35,10 +35,19 @@ class ProductSerializer(serializers.ModelSerializer):
             model = Barcode
             fields = ('description', 'code',)
 
-    barcode = CodeSerializer(many=True)
+    barcode = CodeSerializer(many=True, read_only=True)
     #category = CategorySerializer()
 
     class Meta:
         model = Product
         fields = '__all__'
         read_only_fields = ('id',)
+
+    def to_representation(self, product):
+        """
+        Adding Category Detail to Serializer
+        """
+        data = super().to_representation(product)
+        category = CategorySerializer(product.category)
+        data['category'] = category.data
+        return data

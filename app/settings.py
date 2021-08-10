@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
     # My apps
     'core',
-    'user',
+    # 'user',
     'salesman',
     'client',
     'product',
