@@ -20,8 +20,12 @@ class SalesmanIndicatorsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesmanIndicators
         fields = '__all__'
-        read_only_fields = ('salesman', 'purchases',
-                            'money_generated', 'biggest_sale')
+        read_only_fields = (
+            'salesman',
+            'purchases',
+            'money_generated',
+            'biggest_sale'
+        )
 
     def to_representation(self, value):
         """
