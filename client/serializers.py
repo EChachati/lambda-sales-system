@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Client
+from core.models import Client, ClientIndicator
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -9,13 +9,13 @@ class ClientSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Client
-        fields = (
-            'id',
-            'name',
-            'identity_card',
-            'image',
-            'address',
-            'phone',
-            'purchases',
-            'money_spent'
-        )
+        fields = '__all__'
+
+
+class ClientIndicatorSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Client indicator Object
+    """
+    class Meta:
+        model = ClientIndicator
+        fields = '__all__'

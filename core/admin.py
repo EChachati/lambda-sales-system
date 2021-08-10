@@ -63,7 +63,7 @@ class SalesmanAdmin(admin.ModelAdmin):
 
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'identity_card', 'purchases', 'money_spent')
+    list_display = ('name', 'identity_card',)
     ordering = ('-name', )
 
 

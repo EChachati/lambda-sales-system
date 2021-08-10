@@ -79,12 +79,6 @@ class Client(models.Model):
     )
     address = models.CharField(max_length=255, blank=False)
     phone = models.CharField(max_length=15, blank=False)
-    purchases = models.PositiveIntegerField(default=0)
-    money_spent = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0.00
-    )
 
     def __str__(self):
         return self.name
@@ -229,3 +223,28 @@ class SalesmanIndicators(models.Model):
 
     def __str__(self):
         return str(self.salesman)
+
+
+class ClientIndicator(models.Model):
+    client = models.OneToOneField(
+        Client,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
+
+    biggest_sale = models.OneToOneField(
+        Sale,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    purchases = models.PositiveIntegerField(default=0)
+
+    money_generated = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+
+    def __str__(self):
+        return str(self.client)
