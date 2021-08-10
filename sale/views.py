@@ -28,7 +28,7 @@ class SaleViewSet(viewsets.ModelViewSet):
         salesman_indicator.purchases += 1
         salesman_indicator.money_generated += decimal.Decimal(income)
 
-        if income > salesman_indicator.biggest_sale.income:
+        if decimal.Decimal(income) > salesman_indicator.biggest_sale.income or not salesman_indicator.biggest_sale:
             salesman_indicator.biggest_sale = instance
 
         salesman_indicator.save()

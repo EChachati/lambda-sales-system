@@ -23,11 +23,9 @@ class SalesmanViewSet(viewsets.ModelViewSet):
 
         indicators = SalesmanIndicators.objects.create(salesman=salesman)
         indicators.save()
-        import pdb
-        pdb.set_trace()
         return instance
 
 
-class SalesmanIndicatorsViewSet(viewsets.ModelViewSet):
+class SalesmanIndicatorsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SalesmanIndicators.objects.all()
     serializer_class = serializers.SalesmanIndicatorsSerializer
