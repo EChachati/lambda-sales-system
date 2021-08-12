@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators
+from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators, ClientIndicator
 from sale import serializers
 
 import decimal
@@ -19,24 +19,29 @@ class SaleViewSet(viewsets.ModelViewSet):
         """
         instance = super().create(request)
 
+        salesman = Salesman.objects.get(pk=request.data['salesman'])
+        client = Client.objects.get(pk=request.data['client'])
+        sale = Sale.objects.get(pk=instance.data['id'])
         income = request.data['income']
 
-        salesman = Salesman.objects.get(pk=request.data['salesman'])
+        c_indicator = ClientIndicator.objects.get(pk=client)
+        s_indicator = SalesmanIndicators.objects.get(pk=salesman)
 
-        salesman_indicator = SalesmanIndicators.objects.get(pk=salesman)
+        s_indicator.purchases += 1
+        s_indicator.money_generated += decimal.Decimal(income)
 
-        salesman_indicator.purchases += 1
-        salesman_indicator.money_generated += decimal.Decimal(income)
+        if not s_indicator.biggest_sale or decimal.Decimal(income) > s_indicator.biggest_sale.income:
+            s_indicator.biggest_sale = sale
 
-        if decimal.Decimal(income) > salesman_indicator.biggest_sale.income or not salesman_indicator.biggest_sale:
-            salesman_indicator.biggest_sale = instance
+        c_indicator.purchases += 1
+        c_indicator.money_generated += decimal.Decimal(income)
 
-        salesman_indicator.save()
+        if not c_indicator.biggest_sale or decimal.Decimal(income) > c_indicator.biggest_sale.income:
+            c_indicator.biggest_sale = sale
 
-        client = Client.objects.get(pk=request.data['client'])
-        client.purchases += 1
-        client.money_spent += decimal.Decimal(income)
-        client.save()
+        s_indicator.save()
+        c_indicator.save()
+
         return instance
 
 
