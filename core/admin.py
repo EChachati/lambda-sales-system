@@ -93,6 +93,7 @@ class ProductSaleAdmin(admin.ModelAdmin):
 # admin.site.register(User, UserAdmin)
 admin.site.register(Salesman, SalesmanAdmin)
 admin.site.register(Client, ClientAdmin)
+admin.site.register(ClientIndicator)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Barcode, BarcodeAdmin)
