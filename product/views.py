@@ -26,15 +26,12 @@ class BaseViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateM
         serializer.save(user=self.request.user)
 
 
-# TODO heritage from baseViewSet, Fix User Auth
-class CategoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
+class CategoryViewSet(viewsets.ModelViewSet):
     """
     Manage category in database
     """
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
-
-# TODO add auth
 
 
 class ProductViewSet(viewsets.ModelViewSet):

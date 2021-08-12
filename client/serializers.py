@@ -19,3 +19,12 @@ class ClientIndicatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientIndicator
         fields = '__all__'
+
+    def to_representation(self, value):
+        """
+        Adding Client Data into GET representation
+        """
+        data = super().to_representation(value)
+        client = ClientSerializer(value.client)
+        data['client'] = client.data
+        return data
