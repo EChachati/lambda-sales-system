@@ -4,7 +4,9 @@ from rest_framework.routers import DefaultRouter
 from client import views
 
 router = DefaultRouter()
-router.register('indicator', views.ClientIndicatorViewSet)
+router.register('indicator',
+                views.ClientIndicatorViewSet,
+                basename='indicator')
 router.register('', views.ClientViewSet)
 
 app_name = 'client'
