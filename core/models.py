@@ -61,6 +61,7 @@ class Salesman(models.Model):
     )
     phone_1 = models.CharField(max_length=15, blank=True)
     phone_2 = models.CharField(max_length=15, blank=True)
+    address = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.name
@@ -196,7 +197,7 @@ class ProductSale(models.Model):
     sale = models.ForeignKey(
         Sale, on_delete=models.CASCADE
     )
-    quantity = models.IntegerField(default=1)
+    quantity = models.DecimalField(max_digits=6, decimal_places=2)
     income = models.DecimalField(max_digits=15, decimal_places=2)
 
 
