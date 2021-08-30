@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
 
+from djmoney.models.fields import MoneyField
 import datetime
 
 
@@ -111,24 +112,29 @@ class Product(models.Model):
     )
     description = models.CharField(max_length=144, blank=True)
     presentation = models.CharField(max_length=3, blank=True)
-    cost = models.DecimalField(
+    cost = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
-    price_1 = models.DecimalField(
+
+    price_1 = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
-    price_2 = models.DecimalField(
+    price_2 = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
-    price_3 = models.DecimalField(
+    price_3 = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
     brand = models.CharField(max_length=32, blank=True)

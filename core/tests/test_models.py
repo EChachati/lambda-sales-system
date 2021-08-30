@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
 
+from djmoney.money import Money
 import datetime
 
 
@@ -166,7 +167,7 @@ class ModelTest(TestCase):
         """
         category = self.category
         product = sample_product(category=category)
-        product.price_1 = 5.00
+        product.price_1 = Money(5.00, 'USD')
         quantity = 5
         sale = sample_sale()
 
@@ -174,7 +175,7 @@ class ModelTest(TestCase):
             product=product,
             sale=sale,
             quantity=quantity,
-            income=product.price_1*quantity
+            income=product.price_1.amount*quantity
         )
 
         self.assertEqual(productSale.product, product)
