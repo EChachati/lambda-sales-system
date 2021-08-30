@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import moneyed
 import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
 
     # Others
     'corsheaders',
+    'djmoney',
 
     # Django rest
     'rest_framework',
@@ -136,6 +138,22 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Currencies
+VES = moneyed.add_currency(
+    code='VES',
+    numeric='928',
+    name='Bolivar Venezolano',
+    countries=('Venezuela',)
+)
+
+USD = moneyed.add_currency(
+    code='USD',
+    numeric='840',
+    name='Dolar',
+    countries=('USA',)
+)
+
+CURRENCIES = ('USD', 'VES')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
