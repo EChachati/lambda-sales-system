@@ -6,9 +6,10 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import *
+import json
 
 SALE_URL = reverse('sale:sale-list')
-PRODUCTSALE_URL = reverse('sale:productsale-list')
+CREATE_PS_URL = reverse('sale:create-ps')
 
 
 def sample_category():
@@ -82,10 +83,12 @@ class APITests(TestCase):
     def test_connection(self):
 
         res1 = self.APIClient.get(SALE_URL)
-        res2 = self.APIClient.get(PRODUCTSALE_URL)
+        res2 = self.APIClient.get(CREATE_PS_URL)
+        res3 = self.APIClient.get(CREATE_PS_URL)
 
         self.assertEqual(res1.status_code, 200)
         self.assertEqual(res2.status_code, 200)
+        self.assertEqual(res3.status_code, 200)
 
     def test_create_sale(self):
         """
@@ -145,14 +148,18 @@ class APITests(TestCase):
         """
         Create ProductSale for a Sale works
         """
-        payload = {
+        payload = [{
             'product': self.product.pk,
             'sale': self.sale.pk,
             'quantity': 3,
             'income': '15'
-        }
+        }]
 
-        res = self.APIClient.post(PRODUCTSALE_URL, payload)
+        res = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
 
         self.assertEqual(res.status_code, 201)
 
@@ -161,51 +168,70 @@ class APITests(TestCase):
         Create productsale with incorrect payload fails
         """
 
-        payload1 = {
+        payload1 = [{
             # 'product': self.product.pk,
             'sale': self.sale.pk,
             'quantity': 3,
             'income': '15'
-        }
+        }]
 
-        payload2 = {
+        payload2 = [{
             'product': self.product.pk,
             # 'sale': self.sale.pk,
             'quantity': 3,
             'income': '15'
         }
-
-        payload4 = {
+        ]
+        payload4 = [{
             'product': self.product.pk,
             'sale': self.sale.pk,
             'quantity': 3,
             # 'income': '15'
-        }
+        }]
 
-        payload5 = {
+        payload5 = [{
             'product': '',
             'sale': self.sale.pk,
             'quantity': 3,
             'income': '15'
-        }
-        payload6 = {
+        }]
+        payload6 = [{
             'product': self.product.pk,
             'sale': '',
             'quantity': 3,
             'income': '15'
-        }
-        payload8 = {
+        }]
+        payload8 = [{
             'product': self.product.pk,
             'sale': self.sale.pk,
             'quantity': 3,
             'income': ''
-        }
-        res1 = self.APIClient.post(PRODUCTSALE_URL, payload1)
-        res2 = self.APIClient.post(PRODUCTSALE_URL, payload2)
-        res4 = self.APIClient.post(PRODUCTSALE_URL, payload4)
-        res5 = self.APIClient.post(PRODUCTSALE_URL, payload5)
-        res6 = self.APIClient.post(PRODUCTSALE_URL, payload6)
-        res8 = self.APIClient.post(PRODUCTSALE_URL, payload8)
+        }]
+
+        res1 = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload1),
+            content_type='application/json')
+        res2 = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload2),
+            content_type='application/json')
+        res4 = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload4),
+            content_type='application/json')
+        res5 = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload5),
+            content_type='application/json')
+        res6 = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload6),
+            content_type='application/json')
+        res8 = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload8),
+            content_type='application/json')
 
         self.assertEqual(res1.status_code, 400)
         self.assertEqual(res2.status_code, 400)
@@ -213,3 +239,45 @@ class APITests(TestCase):
         self.assertEqual(res5.status_code, 400)
         self.assertEqual(res6.status_code, 400)
         self.assertEqual(res8.status_code, 400)
+
+    def test_create_multiple_product_sales_one_post(self):
+        """
+        Test Creation of multiple ProductSale objects with one post Works.
+        """
+        payload = [
+            {
+                'product': self.product.pk,
+                'sale': self.sale.pk,
+                'quantity': 3,
+                'income': '12'
+            },
+            {
+                'product': self.product.pk,
+                'sale': self.sale.pk,
+                'quantity': 3.02,
+                'income': '125'
+            }
+        ]
+
+        payload2 = [
+            {
+                'product': self.product.pk,
+                'sale': self.sale.pk,
+                'quantity': 3,
+                'income': '12'
+            }
+        ]
+
+        res = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+
+        res2 = self.APIClient.post(
+            CREATE_PS_URL,
+            data=json.dumps(payload2),
+            content_type='application/json'
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res2.status_code, 201)

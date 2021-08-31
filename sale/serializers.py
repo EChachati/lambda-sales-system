@@ -51,6 +51,10 @@ class ProductSaleSerializer(serializers.ModelSerializer):
     Product-Sale Serializer
     """
 
+    # def __init__(self, *args, **kwargs):
+    #    many = kwargs.pop('many', True)
+    #    super(ProductSaleSerializer, self).__init__(many=many, *args, **kwargs)
+
     class Meta:
         model = ProductSale
         fields = ('product', 'sale', 'quantity', 'income')

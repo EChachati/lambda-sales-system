@@ -1,6 +1,7 @@
-from rest_framework import viewsets
-
-from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators, ClientIndicator
+from rest_framework import viewsets, status
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.response import Response
+from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators, ClientIndicator, Product
 from sale import serializers
 
 import decimal
@@ -51,3 +52,34 @@ class ProductSaleViewSet(viewsets.ModelViewSet):
     """
     queryset = ProductSale.objects.all()
     serializer_class = serializers.ProductSaleSerializer
+    serializer = serializers.ProductSaleSerializer(many=True)
+
+
+class CreateProductSaleAPIView(ListCreateAPIView):
+    """
+    Create multiple products with one Post using a list
+    """
+    queryset = ProductSale.objects.all()
+    serializer_class = serializers.ProductSaleSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(
+            data=request.data, many=isinstance(request.data, list))
+        ps_created = []
+        for data in request.data:
+            if not (
+                'product' in data.keys() and data['product']
+                and 'sale' in data.keys() and data['sale']
+                    and 'income' in data.keys() and data['income']):
+                return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+            data['product'] = Product.objects.get(pk=data['product'])
+            data['sale'] = Sale.objects.get(pk=data['sale'])
+            ps_obj = ProductSale.objects.create(**data)
+            ps_created.append(ps_obj.id)
+
+        results = ProductSale.objects.filter(id__in=ps_created)
+        output_serializer = serializers.ProductSaleSerializer(
+            results, many=True)
+        data = output_serializer.data[:]
+        return Response(data, status=status.HTTP_201_CREATED)
