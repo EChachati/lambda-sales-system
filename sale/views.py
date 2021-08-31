@@ -3,8 +3,10 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators, ClientIndicator, Product
 from sale import serializers
+from moneyed import Money
 
 import decimal
+import pdb
 
 
 class SaleViewSet(viewsets.ModelViewSet):
@@ -23,21 +25,22 @@ class SaleViewSet(viewsets.ModelViewSet):
         salesman = Salesman.objects.get(pk=request.data['salesman'])
         client = Client.objects.get(pk=request.data['client'])
         sale = Sale.objects.get(pk=instance.data['id'])
-        income = request.data['income']
+        income = Money(request.data['income'], 'USD')
 
         c_indicator = ClientIndicator.objects.get(pk=client)
         s_indicator = SalesmanIndicators.objects.get(pk=salesman)
 
         s_indicator.purchases += 1
-        s_indicator.money_generated += decimal.Decimal(income)
+        # pdb.set_trace()
+        s_indicator.money_generated += income
 
-        if not s_indicator.biggest_sale or decimal.Decimal(income) > s_indicator.biggest_sale.income:
+        if not s_indicator.biggest_sale or income > s_indicator.biggest_sale.income:
             s_indicator.biggest_sale = sale
 
         c_indicator.purchases += 1
-        c_indicator.money_generated += decimal.Decimal(income)
+        c_indicator.money_generated += income
 
-        if not c_indicator.biggest_sale or decimal.Decimal(income) > c_indicator.biggest_sale.income:
+        if not c_indicator.biggest_sale or income > c_indicator.biggest_sale.income:
             c_indicator.biggest_sale = sale
 
         s_indicator.save()

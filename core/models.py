@@ -180,7 +180,12 @@ class Sale(models.Model):
         Client,
         on_delete=models.RESTRICT
     )
-    income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    income = MoneyField(
+        max_digits=12,
+        decimal_places=2,
+        default_currency='USD',
+        default=0.00
+    )
     product = models.ManyToManyField(
         Product,
         through='ProductSale'
@@ -204,7 +209,12 @@ class ProductSale(models.Model):
         Sale, on_delete=models.CASCADE
     )
     quantity = models.DecimalField(max_digits=6, decimal_places=2)
-    income = models.DecimalField(max_digits=15, decimal_places=2)
+    income = MoneyField(
+        max_digits=12,
+        decimal_places=2,
+        default_currency='USD',
+        default=0.00
+    )
 
 
 class SalesmanIndicators(models.Model):
@@ -222,9 +232,10 @@ class SalesmanIndicators(models.Model):
 
     purchases = models.PositiveIntegerField(default=0)
 
-    money_generated = models.DecimalField(
+    money_generated = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
 
@@ -247,9 +258,10 @@ class ClientIndicator(models.Model):
 
     purchases = models.PositiveIntegerField(default=0)
 
-    money_generated = models.DecimalField(
+    money_generated = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
 
