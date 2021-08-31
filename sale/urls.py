@@ -5,7 +5,6 @@ from sale import views
 
 router = DefaultRouter()
 
-#router.register('product-sale', views.ProductSaleViewSet)
 router.register('', views.SaleViewSet)
 app_name = 'sale'
 

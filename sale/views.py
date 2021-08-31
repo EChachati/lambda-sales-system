@@ -46,15 +46,6 @@ class SaleViewSet(viewsets.ModelViewSet):
         return instance
 
 
-class ProductSaleViewSet(viewsets.ModelViewSet):
-    """
-    Manage Product Sales in Database
-    """
-    queryset = ProductSale.objects.all()
-    serializer_class = serializers.ProductSaleSerializer
-    serializer = serializers.ProductSaleSerializer(many=True)
-
-
 class CreateProductSaleAPIView(ListCreateAPIView):
     """
     Create multiple products with one Post using a list
