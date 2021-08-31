@@ -84,11 +84,9 @@ class APITests(TestCase):
 
         res1 = self.APIClient.get(SALE_URL)
         res2 = self.APIClient.get(CREATE_PS_URL)
-        res3 = self.APIClient.get(CREATE_PS_URL)
 
         self.assertEqual(res1.status_code, 200)
         self.assertEqual(res2.status_code, 200)
-        self.assertEqual(res3.status_code, 200)
 
     def test_create_sale(self):
         """
