@@ -5,7 +5,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from core.models import Client, ClientIndicator
-
+import pdb
 
 CLIENT_URL = reverse('client:client-list')
 INDICATOR_URL = reverse('client:indicator-list')
@@ -59,11 +59,11 @@ class APITests(TestCase):
 
         self.assertNotEqual(res2.data, [])
         self.assertEqual(
-            res2.data[0]['client']['name'],
+            res2.data['results'][0]['client']['name'],
             client.name
         )
         self.assertEqual(
-            res2.data[0]['client']['identity_card'],
+            res2.data['results'][0]['client']['identity_card'],
             client.identity_card
         )
 

@@ -53,8 +53,9 @@ class APITests(TestCase):
 
         res2 = self.APIClient.get(INDICATOR_URL)
         self.assertNotEqual(res2.data, [])
-        self.assertEqual(res2.data[0]['salesman']['name'], salesman.name)
-        self.assertEqual(res2.data[0]['salesman']
+        self.assertEqual(res2.data['results'][0]
+                         ['salesman']['name'], salesman.name)
+        self.assertEqual(res2.data['results'][0]['salesman']
                          ['identity_card'], salesman.identity_card)
 
     def test_try_create_fail(self):
