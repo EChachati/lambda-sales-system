@@ -14,6 +14,9 @@ class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClientSerializer
 
     def create(self, request):
+        """
+        Create a New Client
+        """
         instance = super().create(request)
         client = Client.objects.get(pk=instance.data['id'])
         obj = ClientIndicator.objects.create(client=client)

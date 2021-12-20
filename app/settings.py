@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'djmoney',
 
+    # Swagger Docs
+    'drf_yasg',
+
     # Django rest
     'rest_framework',
     'rest_framework.authtoken',
