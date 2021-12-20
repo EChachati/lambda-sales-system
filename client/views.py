@@ -3,6 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Client, ClientIndicator
+from core.utils import upload_image
 from client import serializers
 
 
@@ -19,6 +20,9 @@ class ClientViewSet(viewsets.ModelViewSet):
         """
         instance = super().create(request)
         client = Client.objects.get(pk=instance.data['id'])
+        client.image = upload_image(client.image)
+        instance.data['image'] = client.image.name
+        client.save()
         obj = ClientIndicator.objects.create(client=client)
         obj.save()
         return instance
