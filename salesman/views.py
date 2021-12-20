@@ -3,6 +3,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Salesman, SalesmanIndicators
+from core.utils import upload_image
+
 from salesman import serializers
 
 
@@ -20,7 +22,9 @@ class SalesmanViewSet(viewsets.ModelViewSet):
         """
         instance = super().create(request)
         salesman = Salesman.objects.get(pk=instance.data['id'])
-
+        salesman.image = upload_image(salesman.image)
+        instance.data['image'] = salesman.image.name
+        salesman.save()
         indicators = SalesmanIndicators.objects.create(salesman=salesman)
         indicators.save()
         return instance

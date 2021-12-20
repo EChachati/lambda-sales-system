@@ -3,6 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Category, Product, Barcode
+from core.utils import upload_image
 from product import serializers
 
 
@@ -40,6 +41,14 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
+
+    def create(self, request):
+        instance = super().create(request)
+        product = Product.objects.get(pk=instance.data['id'])
+        product.image = upload_image(product.image)
+        instance.data['image'] = product.image.name
+        product.save()
+        return instance
 
 
 class BarcodeViewSet(viewsets.ModelViewSet):
