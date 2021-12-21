@@ -22,9 +22,15 @@ class SalesmanViewSet(viewsets.ModelViewSet):
         """
         instance = super().create(request)
         salesman = Salesman.objects.get(pk=instance.data['id'])
-        salesman.image = upload_image(salesman.image)
+
+        if salesman.image:
+            salesman.image = upload_image(salesman.image)
+        else:
+            salesman.image = 'https://i.ibb.co/JypJ3Ny/pngaaa-com-5015561.png'
+
         instance.data['image'] = salesman.image.name
         salesman.save()
+
         indicators = SalesmanIndicators.objects.create(salesman=salesman)
         indicators.save()
         return instance

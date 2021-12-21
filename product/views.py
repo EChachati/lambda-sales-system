@@ -45,7 +45,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request):
         instance = super().create(request)
         product = Product.objects.get(pk=instance.data['id'])
-        product.image = upload_image(product.image)
+
+        if product.image:
+            product.image = upload_image(product.image)
+        else:
+            product.image = 'https://i.ibb.co/SrMrfyV/pngwing-com.png'
+
         instance.data['image'] = product.image.name
         product.save()
         return instance

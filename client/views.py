@@ -20,7 +20,12 @@ class ClientViewSet(viewsets.ModelViewSet):
         """
         instance = super().create(request)
         client = Client.objects.get(pk=instance.data['id'])
-        client.image = upload_image(client.image)
+
+        if client.image:
+            client.image = upload_image(client.image)
+        else:
+            client.image = 'https://i.ibb.co/XF7qJN4/img-552555.png'
+
         instance.data['image'] = client.image.name
         client.save()
         obj = ClientIndicator.objects.create(client=client)
