@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
 
+from djmoney.models.fields import MoneyField
 import datetime
 
 
@@ -61,6 +62,7 @@ class Salesman(models.Model):
     )
     phone_1 = models.CharField(max_length=15, blank=True)
     phone_2 = models.CharField(max_length=15, blank=True)
+    address = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.name
@@ -110,24 +112,29 @@ class Product(models.Model):
     )
     description = models.CharField(max_length=144, blank=True)
     presentation = models.CharField(max_length=3, blank=True)
-    cost = models.DecimalField(
+    cost = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
-    price_1 = models.DecimalField(
+
+    price_1 = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
-    price_2 = models.DecimalField(
+    price_2 = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
-    price_3 = models.DecimalField(
+    price_3 = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
     brand = models.CharField(max_length=32, blank=True)
@@ -173,7 +180,12 @@ class Sale(models.Model):
         Client,
         on_delete=models.RESTRICT
     )
-    income = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    income = MoneyField(
+        max_digits=12,
+        decimal_places=2,
+        default_currency='USD',
+        default=0.00
+    )
     product = models.ManyToManyField(
         Product,
         through='ProductSale'
@@ -196,8 +208,13 @@ class ProductSale(models.Model):
     sale = models.ForeignKey(
         Sale, on_delete=models.CASCADE
     )
-    quantity = models.IntegerField(default=1)
-    income = models.DecimalField(max_digits=15, decimal_places=2)
+    quantity = models.DecimalField(max_digits=6, decimal_places=2)
+    income = MoneyField(
+        max_digits=12,
+        decimal_places=2,
+        default_currency='USD',
+        default=0.00
+    )
 
 
 class SalesmanIndicators(models.Model):
@@ -215,9 +232,10 @@ class SalesmanIndicators(models.Model):
 
     purchases = models.PositiveIntegerField(default=0)
 
-    money_generated = models.DecimalField(
+    money_generated = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
 
@@ -240,9 +258,10 @@ class ClientIndicator(models.Model):
 
     purchases = models.PositiveIntegerField(default=0)
 
-    money_generated = models.DecimalField(
+    money_generated = MoneyField(
         max_digits=12,
         decimal_places=2,
+        default_currency='USD',
         default=0.00
     )
 
