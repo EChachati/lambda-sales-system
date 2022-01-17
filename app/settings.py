@@ -29,7 +29,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
+"""
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8000',
     'http://127.0.0.1:9000',
@@ -37,6 +38,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:3006',
     'https://lambdasystem.netlify.app',
 )
+"""
 
 # Application definition
 
