@@ -11,6 +11,14 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = '__all__'
 
+    def to_representation(self, instance):
+        """
+        Override to_representation to add image field
+        """
+        representation = super().to_representation(instance)
+        representation['image'] = instance.image.name
+        return representation
+
 
 class ClientIndicatorSerializer(serializers.ModelSerializer):
     """
