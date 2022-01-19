@@ -50,4 +50,5 @@ class ProductSerializer(serializers.ModelSerializer):
         data = super().to_representation(product)
         category = CategorySerializer(product.category)
         data['category'] = category.data
+        data['image'] = product.image.name
         return data
