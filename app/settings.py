@@ -70,6 +70,9 @@ INSTALLED_APPS = [
     'product',
     'sale',
 
+    # Websockets
+    'channels'
+
 
 ]
 
@@ -115,6 +118,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'app.wsgi.application'
+ASGI_APPLICATION = 'app.asgi.application'
 
 
 # Database
