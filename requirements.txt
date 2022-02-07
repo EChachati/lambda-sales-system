@@ -31,7 +31,7 @@ itypes==1.2.0
 Jinja2==3.0.3
 MarkupSafe==2.0.1
 packaging==21.3
-Pillow==8.4.0
+Pillow==9.0.0
 psycopg2==2.9.2
 py-moneyed==1.2
 pyasn1==0.4.8
