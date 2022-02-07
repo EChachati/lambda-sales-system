@@ -141,3 +141,14 @@ class APITests(TestCase):
         self.assertEqual(res7.status_code, 400)
         self.assertEqual(res8.status_code, 400)
         self.assertEqual(res9.status_code, 400)
+
+    def test_create_using_formdata(self):
+        """
+        Create Client using formdata with image
+        """
+        payload = {
+            'name': 'test Client',
+            'identity_card': '12345678',
+            'address': 'Test Address',
+            'phone': '78945656123'
+        }

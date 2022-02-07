@@ -64,7 +64,7 @@ INSTALLED_APPS = [
 
     # My apps
     'core',
-    # 'user', Inactive until Fix
+    'user',  # Inactive until Fix
     'salesman',
     'client',
     'product',
@@ -98,6 +98,10 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FileUploadParser',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ]
 }
 

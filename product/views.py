@@ -11,8 +11,8 @@ class BaseViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateM
     """
     Base Atributes for ViewSets
     """
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         """
@@ -33,6 +33,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -41,6 +43,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request):
         instance = super().create(request)
@@ -62,3 +66,5 @@ class BarcodeViewSet(viewsets.ModelViewSet):
     """
     queryset = Barcode.objects.all()
     serializer_class = serializers.BarcodeSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)

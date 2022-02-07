@@ -165,7 +165,7 @@ class PrivateUserApiTests(TestCase):
             'identity_card': self.user.identity_card
         })
 
-    def test_posrt_me_not_allowed(self):
+    def test_post_me_not_allowed(self):
         """
         Pruba que el Post no sea permitido
         """

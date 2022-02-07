@@ -15,6 +15,8 @@ class SalesmanViewSet(viewsets.ModelViewSet):
 
     queryset = Salesman.objects.all()
     serializer_class = serializers.SalesmanSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request):
         """

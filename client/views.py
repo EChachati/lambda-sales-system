@@ -13,6 +13,8 @@ class ClientViewSet(viewsets.ModelViewSet):
     """
     queryset = Client.objects.all()
     serializer_class = serializers.ClientSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request):
         """
@@ -39,3 +41,5 @@ class ClientIndicatorViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = ClientIndicator.objects.all()
     serializer_class = serializers.ClientIndicatorSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
