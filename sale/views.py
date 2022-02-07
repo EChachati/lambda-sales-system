@@ -1,6 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators, ClientIndicator, Product
 from sale import serializers
 from moneyed import Money
@@ -15,6 +17,8 @@ class SaleViewSet(viewsets.ModelViewSet):
     """
     queryset = Sale.objects.all()
     serializer_class = serializers.SaleSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request):
         """
@@ -55,6 +59,8 @@ class CreateProductSaleAPIView(ListCreateAPIView):
     """
     queryset = ProductSale.objects.all()
     serializer_class = serializers.ProductSaleSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(
