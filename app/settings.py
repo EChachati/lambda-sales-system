@@ -38,6 +38,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:3006',
     'http://127.0.0.1:3006',
     'https://lambdasystem.netlify.app',
+    'https://lambda-sales-api.azurewebsites.net',
 )
 """
 
@@ -130,8 +131,18 @@ ASGI_APPLICATION = 'app.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django',
+        'USER': 'echachati@lambda-sales-api-db',
+        # os.getenv("DB_PASSWORD"),  # GodBlessElPerico
+        'PASSWORD': 'v1v4.3l.p3r1c0',
+        'HOST': 'lambda-sales-api-db.postgres.database.azure.com',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        }
     }
 }
 
