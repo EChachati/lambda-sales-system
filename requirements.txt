@@ -14,7 +14,7 @@ coreschema==0.0.4
 cryptography==36.0.1
 daphne==3.0.2
 dj-database-url==0.5.0
-Django==3.2.11
+Django==3.2.12
 django-cors-headers==3.7.0
 django-heroku==0.3.1
 django-money==2.1
