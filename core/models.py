@@ -104,6 +104,7 @@ class Product(models.Model):
 
     FK -> Category
     """
+    code = models.CharField(max_length=50, unique=True, default='None')
     name = models.CharField(max_length=50, blank=False)
     category = models.ForeignKey(
         Category,
@@ -170,7 +171,7 @@ class Sale(models.Model):
     """
     Sales
     """
-
+    id = models.CharField(max_length=50, unique=True, primary_key=True)
     salesman = models.ForeignKey(
         Salesman,
         on_delete=models.RESTRICT
