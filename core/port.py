@@ -8,8 +8,9 @@ import os
 
 
 #os.system("rm db.sqlite3")
-os.system("python3 manage.py makemigrations")
-os.system("python3 manage.py migrate")
+token = "7cb314eada11bc3995f57c6d8dd42e795a4d2f2d"
+#os.system("python3 manage.py makemigrations")
+#os.system("python3 manage.py migrate")
 """
 user = User(
     email='chachati28@gmail.com',
@@ -18,7 +19,7 @@ user = User(
     password='mailto.01'
 ).save()
 """
-token = "7cb314eada11bc3995f57c6d8dd42e795a4d2f2d"
+'''
 Salesman.objects.all().delete()
 Client.objects.all().delete()
 Product.objects.all().delete()
@@ -246,6 +247,7 @@ print('Barcodes created')
 """
 Create Sales
 """
+Sale.objects.all().delete()
 df_sales = pd.read_csv('core/csv/sales.csv', encoding='latin-1', sep='|')
 df_sales.rename(columns={
     'NumeroD': '_id',
@@ -271,7 +273,7 @@ for i, row in df_sales.iterrows():
         sale = Sale(
             id=row['_id'],
             client=Client.objects.get(identity_card=row['client']),
-            salesman=Salesman.objects.get(pk=row['salesman']),
+            salesman=Salesman.objects.get(pk=str(int(row['salesman']) + 30)),
             date=row['date'],
             income=row['income']
         )
@@ -287,11 +289,12 @@ for i, row in df_sales.iterrows():
         )
         sale.save()
 print('Sales created')
-
+'''
 """
 Create Products Sales
 """
-
+none_product = Product.objects.get(pk=489)
+ProductSale.objects.all().delete()
 df_ps = pd.read_csv(
     'core/csv/product_sale.csv', encoding='latin-1', sep='|', dtype='str')
 df_ps.rename(columns={
