@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 from djmoney.models.fields import MoneyField
 import datetime
@@ -171,6 +172,12 @@ class Sale(models.Model):
     """
     Sales
     """
+    class Status(models.TextChoices):
+        PENDING = 'PENDING', _('Pending')
+        PROCESSING = 'PROCESSING', _('Processing')
+        COMPLETED = 'COMPLETED', _('Completed')
+        CANCELLED = 'CANCELLED', _('Cancelled')
+
     id = models.CharField(max_length=50, unique=True, primary_key=True)
     salesman = models.ForeignKey(
         Salesman,
@@ -192,6 +199,10 @@ class Sale(models.Model):
     )
     description = models.CharField(max_length=255, blank=True)
     date = models.DateField(default=datetime.date.today)
+
+    status = models.CharField(
+        max_length=10, choices=Status.choices, default=Status.PENDING
+    )
 
     def __str__(self):
         return str(self.id)
