@@ -72,14 +72,14 @@ class Client(models.Model):
     Client Model
     """
     identity_card = models.CharField(max_length=15, blank=False)
-    name = models.CharField(max_length=50, blank=False)
+    name = models.CharField(max_length=128, blank=False)
     image = models.ImageField(
         upload_to='client',
         blank=True,
         null=True
     )
     address = models.CharField(max_length=255, blank=False)
-    phone = models.CharField(max_length=15, blank=False)
+    phone = models.CharField(max_length=50, blank=False)
 
     def __str__(self):
         return self.name
