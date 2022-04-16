@@ -11,5 +11,6 @@ router.register('', views.SalesmanViewSet)
 app_name = 'salesman'
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('me/', views.SalesmanMe.as_view(), name='me'),
+    path('', include(router.urls)),
 ]

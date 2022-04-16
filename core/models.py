@@ -39,13 +39,48 @@ class User(AbstractBaseUser, PermissionsMixin):
     Personalized model for Users support login with Email
     """
 
+    class Type(models.TextChoices):
+        """
+        Staff Status
+        """
+        NONE = 'NONE', _('None')
+        ADMIN = 'ADMIN', _('Admin')
+        SALESMAN = 'SALESMAN', _('Salesman')
+        CLIENT = 'CLIENT', _('Client')
+        SALESMAN_AND_CLIENT = 'SALESMAN_AND_CLIENT', _('Salesman and Client')
+
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     identity_card = models.CharField(max_length=12, default='None')
+    phone = models.CharField(max_length=20, default='None')
+    address = models.CharField(max_length=255, default='None')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     objects = UserManager()
+
+    type = models.CharField(
+        max_length=20,
+        choices=Type.choices,
+        default=Type.NONE
+    )
+
     USERNAME_FIELD = 'email'
+
+    def to_dict(self):
+        """
+        Return a dictionary with the user information
+        """
+        return {
+            'id': self.id,
+            'email': self.email,
+            'name': self.name,
+            'identity_card': self.identity_card,
+            'phone': self.phone,
+            'address': self.address,
+            'is_active': self.is_active,
+            'is_staff': self.is_staff,
+            'type': self.type
+        }
 
 
 class Salesman(models.Model):
@@ -67,6 +102,20 @@ class Salesman(models.Model):
     def __str__(self):
         return self.name
 
+    def to_dict(self):
+        """
+        Return a dictionary with the user information
+        """
+        return {
+            'id': self.id,
+            'identity_card': self.identity_card,
+            'name': self.name,
+            'image': self.image.name,
+            'phone_1': self.phone_1,
+            'phone_2': self.phone_2,
+            'address': self.address
+        }
+
 
 class Client(models.Model):
     """
@@ -84,6 +133,19 @@ class Client(models.Model):
 
     def __str__(self):
         return self.name
+
+    def to_dict(self):
+        """
+        Return a dictionary with the user information
+        """
+        return {
+            'id': self.id,
+            'identity_card': self.identity_card,
+            'name': self.name,
+            'image': self.image.name,
+            'address': self.address,
+            'phone': self.phone
+        }
 
 
 class Category(models.Model):
@@ -149,6 +211,25 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def to_dict(self):
+        """
+        Return a dictionary with the user information
+        """
+        return {
+            'id': self.id,
+            'code': self.code,
+            'name': self.name,
+            'category': self.category.name,
+            'description': self.description,
+            'presentation': self.presentation,
+            'cost': self.cost.__str__(),
+            'price_1': self.price_1.__str__(),
+            'price_2': self.price_2.__str__(),
+            'price_3': self.price_3.__str__(),
+            'brand': self.brand,
+            'image': self.image.name
+        }
+
 
 class Barcode(models.Model):
     """
@@ -207,6 +288,21 @@ class Sale(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def to_dict(self):
+        """
+        Return a dictionary with the user information
+        """
+        return {
+            'id': self.id,
+            'salesman': self.salesman.to_dict(),
+            'client': self.client.to_dict(),
+            'income': self.income,
+            'product': [product.to_dict() for product in self.product.all()],
+            'description': self.description,
+            'date': self.date,
+            'status': self.status
+        }
+
 
 class ProductSale(models.Model):
     """
@@ -253,6 +349,14 @@ class SalesmanIndicators(models.Model):
     def __str__(self):
         return str(self.salesman)
 
+    def to_dict(self):
+        return {
+            'salesman': self.salesman.to_dict(),
+            'biggest_sale': self.biggest_sale.to_dict() if self.biggest_sale else None,
+            'purchases': self.purchases,
+            'money_generated': self.money_generated.__str__()
+        }
+
 
 class ClientIndicator(models.Model):
     client = models.OneToOneField(
@@ -278,3 +382,11 @@ class ClientIndicator(models.Model):
 
     def __str__(self):
         return str(self.client)
+
+    def to_dict(self):
+        return {
+            'client': self.client.to_dict(),
+            'biggest_sale': self.biggest_sale.to_dict() if self.biggest_sale else None,
+            'purchases': self.purchases,
+            'money_generated': self.money_generated.__str__()
+        }
