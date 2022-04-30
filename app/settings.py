@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 import moneyed
 import django_heroku
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -135,10 +137,10 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'django',
-        'USER': 'echachati@lambda-sales-api-db',
-        # os.getenv("DB_PASSWORD"),  # GodBlessElPerico
-        'PASSWORD': 'v1v4.3l.p3r1c0',
-        'HOST': 'lambda-sales-api-db.postgres.database.azure.com',
+
+        'USER': 'django@lambda-sales-db',
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),  # GodBlessElPerico
+        'HOST': 'lambda-sales-db.postgres.database.azure.com',
         'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',
