@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.settings import api_settings
+from rest_framework.generics import ListCreateAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -83,3 +84,18 @@ class CreateProductSaleAPIView(ListCreateAPIView):
             results, many=True)
         data = output_serializer.data[:]
         return Response(data, status=status.HTTP_201_CREATED)
+
+
+class GetSalesBySaleman(ListAPIView):
+    """
+    Get All sales made by a salesman
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
+
+    def list(self, request, *args, **kwargs):
+        salesman = Salesman.objects.get(pk=kwargs['pk'])
+        sales = Sale.objects.filter(salesman=salesman)
+        serializer = serializers.SaleSerializer(sales, many=True)
+        return Response(serializer.data)
