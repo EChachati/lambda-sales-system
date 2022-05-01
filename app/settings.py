@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-(f^pq(9#dvl*5t0j_mc98rm(s@d(qrpr=*!g4gcnw8!c34&#sb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://lambda-sales-api.azurewebsites.net']
 
 CORS_ORIGIN_ALLOW_ALL = True
 """
