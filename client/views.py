@@ -11,7 +11,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     """
     Manage Client in database
     """
-    queryset = Client.objects.all()
+    queryset = Client.objects.all().order_by('name')
     serializer_class = serializers.ClientSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)

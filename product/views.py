@@ -41,7 +41,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     manage Products in Database
     """
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().order_by('name')
     serializer_class = serializers.ProductSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)

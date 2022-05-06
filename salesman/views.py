@@ -16,7 +16,7 @@ class SalesmanViewSet(viewsets.ModelViewSet):
     Manage Salesman in database
     """
 
-    queryset = Salesman.objects.all()
+    queryset = Salesman.objects.all().order_by('name')
     serializer_class = serializers.SalesmanSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)

@@ -16,7 +16,7 @@ class SaleViewSet(viewsets.ModelViewSet):
     """
     Manage Sales in Database
     """
-    queryset = Sale.objects.all()
+    queryset = Sale.objects.all().order_by('-date', '-id')
     serializer_class = serializers.SaleSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -95,7 +95,11 @@ class GetSalesBySaleman(ListAPIView):
     pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
 
     def list(self, request, *args, **kwargs):
-        salesman = Salesman.objects.get(pk=kwargs['pk'])
-        sales = Sale.objects.filter(salesman=salesman)
+        salesman_id = kwargs['pk']
+        salesman = Salesman.objects.get(pk=salesman_id)
+        sales = Sale.objects.raw(
+            f"SELECT x.* FROM public.core_sale x WHERE salesman_id = {salesman_id}")
+        pdb.set_trace()
+        sales = [s.to_dict() for s in sales]
         serializer = serializers.SaleSerializer(sales, many=True)
         return Response(serializer.data)
