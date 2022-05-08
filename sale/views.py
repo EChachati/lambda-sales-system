@@ -5,11 +5,12 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators, ClientIndicator, Product
+from core.utils import apply_query_filters
+
 from sale import serializers
 from moneyed import Money
 
-import decimal
-import pdb
+
 
 
 class SaleViewSet(viewsets.ModelViewSet):
@@ -20,6 +21,9 @@ class SaleViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.SaleSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
 
     def create(self, request):
         """
@@ -36,7 +40,6 @@ class SaleViewSet(viewsets.ModelViewSet):
         s_indicator = SalesmanIndicators.objects.get(pk=salesman)
 
         s_indicator.purchases += 1
-        # pdb.set_trace()
         s_indicator.money_generated += income
 
         if not s_indicator.biggest_sale or income > s_indicator.biggest_sale.income:
@@ -93,6 +96,9 @@ class GetSalesBySaleman(ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     pagination_class = api_settings.DEFAULT_PAGINATION_CLASS
+
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
 
     def list(self, request, *args, **kwargs):
         salesman_id = kwargs['pk']

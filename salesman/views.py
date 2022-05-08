@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 
 from core.models import Salesman, SalesmanIndicators
-from core.utils import upload_image
+from core.utils import upload_image, apply_query_filters
 
 from salesman import serializers
 
@@ -40,10 +40,16 @@ class SalesmanViewSet(viewsets.ModelViewSet):
         indicators.save()
         return instance
 
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
+
 
 class SalesmanIndicatorsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SalesmanIndicators.objects.all()
     serializer_class = serializers.SalesmanIndicatorsSerializer
+
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
 
 
 class SalesmanMe(APIView):

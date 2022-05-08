@@ -3,7 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Client, ClientIndicator
-from core.utils import upload_image
+from core.utils import upload_image, apply_query_filters
 from client import serializers
 
 
@@ -15,6 +15,9 @@ class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClientSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
 
     def create(self, request):
         """
@@ -43,3 +46,6 @@ class ClientIndicatorViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.ClientIndicatorSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)

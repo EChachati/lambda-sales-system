@@ -3,7 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Category, Product, Barcode
-from core.utils import upload_image
+from core.utils import upload_image, apply_query_filters
 from product import serializers
 
 
@@ -36,6 +36,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -45,6 +48,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
 
     def create(self, request):
         instance = super().create(request)
@@ -68,3 +74,6 @@ class BarcodeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.BarcodeSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
