@@ -39,13 +39,18 @@ class ClientViewSet(viewsets.ModelViewSet):
 
 
 class ClientIndicatorViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Get Client Indicators in Database
-    """
+
     queryset = ClientIndicator.objects.all()
     serializer_class = serializers.ClientIndicatorSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
+        """
+        It takes a request object and a queryset, and returns a queryset that has been filtered
+        according to the query parameters in the request
+        :return: The queryset is being returned.
+        """
         return apply_query_filters(self.request, self.queryset)
+
+

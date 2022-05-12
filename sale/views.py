@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.settings import api_settings
 from rest_framework.generics import ListCreateAPIView, ListAPIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -9,8 +10,7 @@ from core.utils import apply_query_filters
 
 from sale import serializers
 from moneyed import Money
-
-
+from sale.ia import load_model, train_model, predict
 
 
 class SaleViewSet(viewsets.ModelViewSet):
@@ -109,3 +109,33 @@ class GetSalesBySaleman(ListAPIView):
         sales = [s.to_dict() for s in sales]
         serializer = serializers.SaleSerializer(sales, many=True)
         return Response(serializer.data)
+
+
+class IAView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, format=None):
+        time_range = 'month' if bool(request.data['month']) else 'year'
+        model_type = 'income' if bool(request.data['income']) else 'count'
+        group_by = request.data['group_by']  # month, year or None
+
+        model = load_model(
+            f"sale_{model_type}_{time_range}_grouped_by_{group_by}_model")
+
+        if not model:
+            model = train_model(
+                month=bool(request.data['month']),
+                income=bool(request.data['income']),
+                group_by=request.data['group_by']
+            )
+
+        count = [595, 872, 777, 710, 739, 745, 876, 816, 908, 1114, 1106, 838]
+        income = [158706.08, 257297.47, 192503.59, 206944.43, 166545.74, 166283.13,
+                  158943.72, 138120.65, 175135.81, 279933.26, 272847.04, 222096.95]
+
+        # for test use month=true, income=true, group_by=month
+
+        predictions = predict(model, count, income)
+
+        return Response(predictions)
