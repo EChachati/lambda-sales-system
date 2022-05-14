@@ -11,6 +11,10 @@ load_dotenv()
 
 
 def get_connection():
+    """
+    It connects to the database and returns a connection and cursor object
+    :return: A tuple of two objects: a connection object and a cursor object.
+    """
     # DB Connection for IA
     host = os.getenv("HOST")
     dbname = os.getenv("DB_NAME")
@@ -28,6 +32,24 @@ conn, cursor = get_connection()
 
 
 def get_grouped_data(month=True, to_dict=False):
+    """
+    It takes a SQL query, converts it to a dataframe, groups it by year and month, and returns the
+    grouped dataframe
+
+    :param month: If True, the data will be grouped by month. If False, the data will be grouped by
+    year, defaults to True (optional)
+    :param to_dict: If True, the function will return a dictionary instead of a dataframe, defaults to
+    False (optional)
+    :return: A dataframe or a dictionary with the following structure:
+    {
+        year: {
+            month: {
+                'income': income,
+                'count': count
+            }
+        }
+    }
+    """
     query = "SELECT * FROM core_sale;"
     df_sales_copy = pd.read_sql(query, conn)
     df_sales_copy["year"] = df_sales_copy.apply(
@@ -48,32 +70,32 @@ def get_grouped_data(month=True, to_dict=False):
         'income': df_groupby_sales['income'].sum(),
         'count': df_groupby_sales['id'].count()
     }
-
-    if to_dict:
-        # Get the historic data from the database
-        # It is a dataframe with the historic data
-        # send it by dict wit h this strructure:
-        """
-        {
-            2022: {
-                11: {
-                    income: #####,
-                    count: #####,
-                    }
-                12: {
-                    income: #####,
-                    count: #####,
-                    },
-            2023: { ...
-        }
-        """
-        pass
     df = pd.DataFrame(sales_data)
     df.reset_index(inplace=True)
+    if to_dict:
+        # Converting the dataframe to a dictionary.
+        d = {}
+        for row in df.itertuples():
+            if row.year not in d.keys():
+                d[row.year] = {}
+            if row.month not in d[row.year].keys():
+                d[row.year][row.month] = {
+                    'income': row.income, 'count': row.count}
+        return d
     return df
 
 
 def train_model(month=True, income=True, group_by=None):
+    """
+    It takes in a dataframe, and returns a trained model
+
+    :param month: True if you want to train the model on monthly data, False if you want to train the
+    model on yearly data, defaults to True (optional)
+    :param income: True if you want to predict income, False if you want to predict count, defaults to
+    True (optional)
+    :param group_by: the column to group by. If None, then no grouping is done, can be month or year
+    :return: The model is being returned.
+    """
     time_range = 'month' if month else 'year'
     df = get_grouped_data(month=month)
     if group_by:
@@ -86,8 +108,6 @@ def train_model(month=True, income=True, group_by=None):
         df[f"sales_next_{time_range}_count"] = df["count"].shift(-1)
 
     df.dropna(inplace=True)
-
-    print(df)
 
     features = ["income", "count"]  # month
     imputer = SimpleImputer()
@@ -105,16 +125,28 @@ def train_model(month=True, income=True, group_by=None):
 
     save_model(
         model, f"sale_{model_type}_{time_range}_grouped_by_{group_by}_model")
-
+    print(f"sale_{model_type}_{time_range}_grouped_by_{group_by}_model")
     return model
 
 
 def save_model(model, name):
+    """
+    It takes a model and a name, and saves the model as a pickle file with the name you gave it
+
+    :param model: The model you want to save
+    :param name: The name of the model
+    """
     with open(f"core/models_ia/{name}.pkl", "wb") as f:
         pickle.dump(model, f)
 
 
 def load_model(name):
+    """
+    It loads a model from a file
+
+    :param name: The name of the model
+    :return: The model is being returned. None if it doesn't exist
+    """
     try:
         with open(f"core/models_ia/{name}.pkl", "rb") as f:
             model = pickle.load(f)
@@ -124,10 +156,16 @@ def load_model(name):
 
 
 def predict(model, income: List, count: List):
+    """
+    It takes in a model, a list of incomes, and a list of counts, and returns a list of predictions
 
-    count = [595, 872, 777, 710, 739, 745, 876, 816, 908, 1114, 1106, 838]
-    income = [158706.08, 257297.47, 192503.59, 206944.43, 166545.74, 166283.13,
-              158943.72, 138120.65, 175135.81, 279933.26, 272847.04, 222096.95]
+    :param model: The model you want to use to predict the data
+    :param income: List of income values
+    :type income: List
+    :param count: The number of people in the household
+    :type count: List
+    :return: The predicted values for the given data.
+    """
     data = SimpleImputer().fit_transform(
         pd.DataFrame({'income': income, 'count': count})
     )
