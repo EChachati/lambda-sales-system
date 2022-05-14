@@ -3,7 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Client, ClientIndicator
-from core.utils import upload_image
+from core.utils import upload_image, apply_query_filters
 from client import serializers
 
 
@@ -11,10 +11,13 @@ class ClientViewSet(viewsets.ModelViewSet):
     """
     Manage Client in database
     """
-    queryset = Client.objects.all()
+    queryset = Client.objects.all().order_by('name')
     serializer_class = serializers.ClientSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return apply_query_filters(self.request, self.queryset)
 
     def create(self, request):
         """
@@ -36,10 +39,18 @@ class ClientViewSet(viewsets.ModelViewSet):
 
 
 class ClientIndicatorViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Get Client Indicators in Database
-    """
+
     queryset = ClientIndicator.objects.all()
     serializer_class = serializers.ClientIndicatorSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        """
+        It takes a request object and a queryset, and returns a queryset that has been filtered
+        according to the query parameters in the request
+        :return: The queryset is being returned.
+        """
+        return apply_query_filters(self.request, self.queryset)
+
+
