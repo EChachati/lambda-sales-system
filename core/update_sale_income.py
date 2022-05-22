@@ -8,13 +8,12 @@ load_dotenv()
 
 # DB CONNECT
 
-host = os.getenv("HOST")
+host = os.getenv("DB_HOST")
 dbname = os.getenv("DB_NAME")
 user = os.getenv("DB_USERNAME")
-password = os.getenv("DATABASE_PASSWORD")
+password = os.getenv("DB_PASSWORD")
 
-conn_string = "host={0} user={1} dbname={2} password={3}".format(
-    host, user, dbname, password)
+conn_string = "host={0} user={1} dbname={2} password={3}".format(host, user, dbname, password)
 conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
 

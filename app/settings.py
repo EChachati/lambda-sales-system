@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-(f^pq(9#dvl*5t0j_mc98rm(s@d(qrpr=*!g4gcnw8!c34&#sb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://lambda-sales-api.azurewebsites.net']
+ALLOWED_HOSTS = ['https://lambdaapi.azurewebsites.net']
 
 CORS_ORIGIN_ALLOW_ALL = True
 """
@@ -136,11 +136,10 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django',
-
-        'USER': 'django@lambda-sales-db',
-        'PASSWORD': os.getenv("DATABASE_PASSWORD"),  # GodBlessElPerico
-        'HOST': 'lambda-sales-db.postgres.database.azure.com',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USERNAME'),
+        'PASSWORD': os.getenv("DB_PASSWORD"), 
+        'HOST': os.getenv('DB_HOST'),
         'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',

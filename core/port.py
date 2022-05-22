@@ -19,7 +19,7 @@ user = User(
     password='mailto.01'
 ).save()
 """
-'''
+
 Salesman.objects.all().delete()
 Client.objects.all().delete()
 Product.objects.all().delete()
@@ -36,11 +36,8 @@ READ AND CREATE SALESMANS
 """
 
 df_salesman = pd.read_csv('core/csv/salesman.csv', encoding='latin-1', sep='|')
-df_salesman['Telef'] = '0' + \
-    df_salesman['Telef'].astype('string').str.replace('.0', '', regex=False)
-df_salesman['Movil'] = '0' + \
-    df_salesman['Movil'].astype(
-        'string').str.replace('.0', '', regex=False)
+df_salesman['Telef'] = '0' + df_salesman['Telef'].astype('string').str.replace('.0', '', regex=False)
+df_salesman['Movil'] = '0' + df_salesman['Movil'].astype('string').str.replace('.0', '', regex=False)
 df_salesman.rename(
     columns={
         'Descrip': 'name',
@@ -73,8 +70,7 @@ print('Salesman created')
 """
 READ AND CREATE CLIENTS
 """
-df_clients = pd.read_csv('core/csv/clients.csv',
-                         encoding='latin-1', sep='|', engine='python')
+df_clients = pd.read_csv('core/csv/clients.csv', encoding='latin-1', sep='|', engine='python')
 df_clients.rename(columns={
     'CodClie': 'identity_card',
     'Descrip': 'name',
@@ -148,8 +144,7 @@ df_products['presentation'] = df_products['presentation'].apply(
     lambda x: str(x).upper())
 df_products['category_id'] = df_products['category_id'].apply(
     lambda x: str(x).replace('.0', ''))
-df_products = df_products[['_id', 'name', 'description',
-                           'category_id', 'brand', 'presentation']]
+df_products = df_products[['_id', 'name', 'description', 'category_id', 'brand', 'presentation']]
 
 # Prices CSV
 
@@ -273,7 +268,7 @@ for i, row in df_sales.iterrows():
         sale = Sale(
             id=row['_id'],
             client=Client.objects.get(identity_card=row['client']),
-            salesman=Salesman.objects.get(pk=str(int(row['salesman']) + 30)),
+            salesman=Salesman.objects.get(pk=str(int(row['salesman']) )),
             date=row['date'],
             income=row['income']
         )
@@ -289,7 +284,7 @@ for i, row in df_sales.iterrows():
         )
         sale.save()
 print('Sales created')
-'''
+
 """
 Create Products Sales
 """
