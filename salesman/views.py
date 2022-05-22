@@ -6,8 +6,9 @@ from rest_framework.response import Response
 
 
 from core.models import Salesman, SalesmanIndicators
-from core.utils import upload_image, apply_query_filters
+from core.utils import upload_image, apply_query_filters, load_model, predict
 
+from salesman.ia import get_grouped_data, train_model
 from salesman import serializers
 
 
@@ -123,3 +124,27 @@ class SalesmanMe(APIView):
                 {'Error': 'User is not a Salesman'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class IAView(APIView):
+    def post(self, request, *args, **kwargs):
+        model_type = 'income' if bool(request.data['income']) else 'count'
+
+        model = load_model(f"salesman_{model_type}_per_month_model")
+        if not model:
+            model = train_model(income=bool(request.data['income']))
+        data = get_grouped_data(to_dict=True)
+        income, count = [], []
+
+        try:
+            income.append(data[request.data['salesman_id']][2022][2]['income'])
+        except KeyError:
+            income.append(0)
+
+        try:
+            count.append(data[request.data['salesman_id']][2022][2]['count'])
+        except KeyError:
+            count.append(0)
+
+        ret = predict(model, income, count)
+        return Response(ret, status=status.HTTP_200_OK)

@@ -11,5 +11,6 @@ router.register('', views.ProductViewSet)
 app_name = 'product'
 
 urlpatterns = [
+    path('ia', views.IAView.as_view(), name='ia'),
     path('', include(router.urls))
 ]

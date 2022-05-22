@@ -1,10 +1,13 @@
 from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from core.models import Client, ClientIndicator
-from core.utils import upload_image, apply_query_filters
+from core.utils import upload_image, apply_query_filters, predict, load_model
 from client import serializers
+from client.ia import get_grouped_data, train_model
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -54,3 +57,27 @@ class ClientIndicatorViewSet(viewsets.ReadOnlyModelViewSet):
         return apply_query_filters(self.request, self.queryset)
 
 
+class IAView(APIView):
+    def post(self, request, *args, **kwargs):
+        model_type = 'income' if bool(request.data['income']) else 'count'
+
+        model = load_model(f"client_{model_type}_per_month_model")
+
+        if not model:
+            model = train_model(income=bool(request.data['income']))
+
+        data = get_grouped_data(to_dict=True)
+        income, count = [], []
+
+        try:
+            income.append(data[request.data['client_id']][2022][2]['income'])
+        except KeyError:
+            income.append(0)
+
+        try:
+            count.append(data[request.data['client_id']][2022][2]['count'])
+        except KeyError:
+            count.append(0)
+
+        ret = predict(model, income, count)
+        return Response(ret, status=status.HTTP_200_OK)

@@ -14,5 +14,6 @@ router.register('', views.ClientViewSet)
 app_name = 'client'
 
 urlpatterns = [
+    path('ia', views.IAView.as_view(), name='ia'),
     path('', include(router.urls))
 ]

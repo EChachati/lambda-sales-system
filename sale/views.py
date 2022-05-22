@@ -6,11 +6,11 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators, ClientIndicator, Product
-from core.utils import apply_query_filters
+from core.utils import apply_query_filters, load_model, predict
 
 from sale import serializers
 from moneyed import Money
-from sale.ia import load_model, train_model, predict, get_grouped_data
+from sale.ia import train_model, get_grouped_data
 import pandas as pd
 
 

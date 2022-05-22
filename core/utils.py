@@ -1,6 +1,10 @@
 import requests
 import json
 import base64
+from typing import List
+import pickle
+from sklearn.impute import SimpleImputer
+import pandas as pd
 
 API_KEY = '77643199c4393578689646652b98080a'
 
@@ -37,3 +41,46 @@ def apply_query_filters(request, queryset):
         if param:
             q = q.filter(**{f: param})
     return q
+
+
+def save_model(model, name):
+    """
+    It takes a model and a name, and saves the model as a pickle file with the name you gave it
+
+    :param model: The model you want to save
+    :param name: The name of the model
+    """
+    with open(f"core/models_ia/{name}.pkl", "wb") as f:
+        pickle.dump(model, f)
+
+
+def load_model(name):
+    """
+    It loads a model from a file
+
+    :param name: The name of the model
+    :return: The model is being returned. None if it doesn't exist
+    """
+    try:
+        with open(f"core/models_ia/{name}.pkl", "rb") as f:
+            model = pickle.load(f)
+        return model
+    except:
+        return None
+
+
+def predict(model, income: List, count: List):
+    """
+    It takes in a model, a list of incomes, and a list of counts, and returns a list of predictions
+
+    :param model: The model you want to use to predict the data
+    :param income: List of income values
+    :type income: List
+    :param count: The number of people in the household
+    :type count: List
+    :return: The predicted values for the given data.
+    """
+    data = SimpleImputer().fit_transform(
+        pd.DataFrame({'income': income, 'count': count})
+    )
+    return model.predict(data)

@@ -5,30 +5,9 @@ import os
 from dotenv import load_dotenv
 from sklearn.impute import SimpleImputer
 from sklearn.ensemble import RandomForestRegressor
-import pickle
-from typing import List
+from django.db import connection
+from core.utils import save_model
 load_dotenv()
-
-
-def get_connection():
-    """
-    It connects to the database and returns a connection and cursor object
-    :return: A tuple of two objects: a connection object and a cursor object.
-    """
-    # DB Connection for IA
-    host = os.getenv("DB_HOST")
-    dbname = os.getenv("DB_NAME")
-    user = os.getenv("DB_USERNAME")
-    password = os.getenv("DB_PASSWORD")
-
-    conn_string = "host={0} user={1} dbname={2} password={3}".format(
-        host, user, dbname, password)
-    conn = psycopg2.connect(conn_string)
-    cursor = conn.cursor()
-    return conn, cursor
-
-
-conn, cursor = get_connection()
 
 
 def get_grouped_data(month=True, to_dict=False):
@@ -51,7 +30,7 @@ def get_grouped_data(month=True, to_dict=False):
     }
     """
     query = "SELECT * FROM core_sale;"
-    df_sales_copy = pd.read_sql(query, conn)
+    df_sales_copy = pd.read_sql(query, connection)
     df_sales_copy["year"] = df_sales_copy.apply(
         lambda row: row["date"].year, axis=1)
     df_sales_copy["month"] = df_sales_copy.apply(
@@ -127,46 +106,3 @@ def train_model(month=True, income=True, group_by=None):
         model, f"sale_{model_type}_{time_range}_grouped_by_{group_by}_model")
     print(f"sale_{model_type}_{time_range}_grouped_by_{group_by}_model")
     return model
-
-
-def save_model(model, name):
-    """
-    It takes a model and a name, and saves the model as a pickle file with the name you gave it
-
-    :param model: The model you want to save
-    :param name: The name of the model
-    """
-    with open(f"core/models_ia/{name}.pkl", "wb") as f:
-        pickle.dump(model, f)
-
-
-def load_model(name):
-    """
-    It loads a model from a file
-
-    :param name: The name of the model
-    :return: The model is being returned. None if it doesn't exist
-    """
-    try:
-        with open(f"core/models_ia/{name}.pkl", "rb") as f:
-            model = pickle.load(f)
-        return model
-    except:
-        return None
-
-
-def predict(model, income: List, count: List):
-    """
-    It takes in a model, a list of incomes, and a list of counts, and returns a list of predictions
-
-    :param model: The model you want to use to predict the data
-    :param income: List of income values
-    :type income: List
-    :param count: The number of people in the household
-    :type count: List
-    :return: The predicted values for the given data.
-    """
-    data = SimpleImputer().fit_transform(
-        pd.DataFrame({'income': income, 'count': count})
-    )
-    return model.predict(data)
