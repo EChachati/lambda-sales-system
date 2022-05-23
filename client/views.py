@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from core.models import Client, ClientIndicator
 from core.utils import upload_image, apply_query_filters, predict, load_model
 from client import serializers
-from client.ia import get_grouped_data, train_model
+from client.ia import *
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -81,3 +81,20 @@ class IAView(APIView):
 
         ret = predict(model, income, count)
         return Response(ret, status=status.HTTP_200_OK)
+
+
+class StatisticsView(APIView):
+    def post(self, request, *args, **kwargs):
+        client_id = request.data.get('client_id')
+        type = request.data['type']
+        if type not in ['category', 'product', 'salesman']:
+            return Response({'error': 'Invalid type dejate de mamadas fran pasa uno de estos tres ["category", "product", "salesman"]'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if type == 'category':
+            data = sales_realized_per_category(client_id)
+        elif type == 'product':
+            data = sales_realized_per_product(client_id)
+        elif type == 'salesman':
+            data = sales_realized_per_salesman(client_id)
+
+        return Response(data, status=status.HTTP_200_OK)

@@ -15,5 +15,6 @@ app_name = 'client'
 
 urlpatterns = [
     path('ia', views.IAView.as_view(), name='ia'),
+    path('statistic', views.StatisticsView.as_view(), name='statistic'),
     path('', include(router.urls))
 ]

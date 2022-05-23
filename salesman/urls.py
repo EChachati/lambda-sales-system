@@ -12,6 +12,7 @@ app_name = 'salesman'
 
 urlpatterns = [
     path('ia', views.IAView.as_view(), name='ia'),
+    path('statistic', views.StatisticsView.as_view(), name='statistic'),
     path('me/', views.SalesmanMe.as_view(), name='me'),
     path('', include(router.urls)),
 ]

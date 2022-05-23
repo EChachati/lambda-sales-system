@@ -224,10 +224,10 @@ class Product(models.Model):
             'category': self.category.name,
             'description': self.description,
             'presentation': self.presentation,
-            'cost': self.cost.__str__(),
-            'price_1': self.price_1.__str__(),
-            'price_2': self.price_2.__str__(),
-            'price_3': self.price_3.__str__(),
+            'cost': self.cost.amount,
+            'price_1': self.price_1.amount,
+            'price_2': self.price_2.amount,
+            'price_3': self.price_3.amount,
             'brand': self.brand,
             'image': self.image.name
         }
@@ -300,7 +300,7 @@ class Sale(models.Model):
             'id': self.id,
             'salesman': self.salesman.to_dict(),
             'client': self.client.to_dict(),
-            'income': self.income,
+            'income': self.income.amount,
             'product': [product.to_dict() for product in self.product.all()],
             'description': self.description,
             'date': self.date,
@@ -358,7 +358,7 @@ class SalesmanIndicators(models.Model):
             'salesman': self.salesman.to_dict(),
             'biggest_sale': self.biggest_sale.to_dict() if self.biggest_sale else None,
             'purchases': self.purchases,
-            'money_generated': self.money_generated.__str__()
+            'money_generated': self.money_generated.amount
         }
 
 
@@ -392,5 +392,5 @@ class ClientIndicator(models.Model):
             'client': self.client.to_dict(),
             'biggest_sale': self.biggest_sale.to_dict() if self.biggest_sale else None,
             'purchases': self.purchases,
-            'money_generated': self.money_generated.__str__()
+            'money_generated': self.money_generated.amount
         }

@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from core.models import Salesman, SalesmanIndicators
 from core.utils import upload_image, apply_query_filters, load_model, predict
 
-from salesman.ia import get_grouped_data, train_model
+from salesman.ia import *
 from salesman import serializers
 
 
@@ -148,3 +148,21 @@ class IAView(APIView):
 
         ret = predict(model, income, count)
         return Response(ret, status=status.HTTP_200_OK)
+
+
+class StatisticsView(APIView):
+    def post(self, request, *args, **kwargs):
+        salesman_id = request.data.get('salesman_id')
+        type = request.data['type']
+
+        if type not in ['category', 'product', 'client']:
+            return Response({'error': 'Invalid type dejate de mamadas fran pasa uno de estos tres ["category", "product", "client"]'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if type == 'category':
+            data = sales_realized_per_category(salesman_id)
+        elif type == 'product':
+            data = sales_realized_per_product(salesman_id)
+        elif type == 'client':
+            data = sales_realized_per_client(salesman_id)
+
+        return Response(data, status=status.HTTP_200_OK)
