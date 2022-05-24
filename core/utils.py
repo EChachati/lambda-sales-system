@@ -5,7 +5,7 @@ from typing import List
 import pickle
 from sklearn.impute import SimpleImputer
 import pandas as pd
-
+from datetime import datetime
 API_KEY = '77643199c4393578689646652b98080a'
 
 
@@ -36,6 +36,15 @@ def apply_query_filters(request, queryset):
     """
     q = queryset
     possible_filters = queryset.first().to_dict().keys()
+
+    date_start = request.query_params.get('date_start', None)
+    date_end = request.query_params.get('date_end', None)
+    date_format = '%Y-%m-%d'
+    q = q.filter(date__gte=datetime.strptime(
+        date_start, date_format)) if date_start else q
+    q = q.filter(date__lte=datetime.strptime(
+        date_end, date_format)) if date_end else q
+
     for f in possible_filters:
         param = request.query_params.get(f) if f else None
         if param:
