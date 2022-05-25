@@ -109,7 +109,7 @@ def sales_realized_per_client(salesman_id=None):
                 'name_salesman': row.name_salesman, 'clients': {}}
         if row.client_id not in dict[row.salesman_id]['clients'].keys():
             dict[row.salesman_id]['clients'][row.client_id] = {
-                'name_client': row.name_client, 'count': row.count, 'total_income': row.total_income}
+                'name': row.name_client, 'count': row.count, 'total_income': row.total_income}
     return dict
 
 
@@ -164,7 +164,7 @@ def sales_realized_per_category(salesman_id=None):
                 'name_salesman': row.name_salesman, 'categories': {}}
         if row.category_id not in dict[row.salesman_id]['categories'].keys():
             dict[row.salesman_id]['categories'][row.category_id] = {
-                'name_category': row.name_category, 'count': row.count, 'total_income': row.total_income}
+                'name': row.name_category, 'count': row.count, 'total_income': row.total_income}
     return dict
 
 
@@ -210,5 +210,5 @@ def sales_realized_per_product(salesman_id=None):
                 'name_salesman': row.name_salesmans, 'products': {}}
         if row.product_id not in dict[row.salesman_id]['products'].keys():
             dict[row.salesman_id]['products'][row.product_id] = {
-                'name_products': row.name_products, 'count': row.count, 'total_income': row.total_income}
+                'name': row.name_products, 'count': row.count, 'total_income': row.total_income}
     return dict
