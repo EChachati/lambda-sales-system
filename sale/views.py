@@ -7,6 +7,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from core.models import Sale, ProductSale, Salesman, Client, SalesmanIndicators, ClientIndicator, Product
 from core.utils import apply_query_filters, load_model, predict
+from django.db.models import Max
 
 from sale import serializers
 from moneyed import Money
@@ -193,3 +194,29 @@ class IAView(APIView):
                 count = sum(predict_df.iloc[1].tolist())
                 predictions = predict(model, count=[count], income=[income])
         return Response(predictions)
+
+
+class StatisticView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        year = request.data['year']
+        data = get_grouped_data(to_dict=True)
+        data = data[year]
+        data_list = []
+        month = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+        for key, value in data.items():
+            value['name'] = month[int(key) - 1]
+            data_list.append(value)
+        return Response(data_list)
+
+
+class GetBiggestSale(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        sale = Sale.objects.latest('income')
+        return Response(sale.id)

@@ -14,5 +14,7 @@ urlpatterns = [
     path('salesman/<int:pk>', views.GetSalesBySaleman.as_view(),
          name='get-sales-by-saleman'),
     path('ia', views.IAView.as_view(), name='ia'),
+    path('statistic', views.StatisticView.as_view(), name='statistic'),
+    path('biggest-sale', views.GetBiggestSale.as_view(), name='biggest-sale'),
     path('', include(router.urls))
 ]
