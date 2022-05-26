@@ -1,3 +1,4 @@
+import pdb
 import requests
 import json
 import base64
@@ -78,7 +79,7 @@ def load_model(name):
         return None
 
 
-def predict(model, income: List, count: List):
+def predict(model, income: List, count: List, month=None):
     """
     It takes in a model, a list of incomes, and a list of counts, and returns a list of predictions
 
@@ -92,4 +93,8 @@ def predict(model, income: List, count: List):
     data = SimpleImputer().fit_transform(
         pd.DataFrame({'income': income, 'count': count})
     )
+    if month:
+        data = SimpleImputer().fit_transform(
+            pd.DataFrame({'income': income, 'count': count, "month": month})
+        )
     return model.predict(data)

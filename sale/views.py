@@ -170,7 +170,8 @@ class IAView(APIView):
 
             income = predict_df.iloc[0].tolist()
             count = predict_df.iloc[1].tolist()
-            predictions = predict(model, count, income)
+            predictions = predict(model, income=income,
+                                  count=count, month=list(range(1, 13)))
             months_names = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                             'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
             d = {}
