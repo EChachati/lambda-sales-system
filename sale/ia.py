@@ -87,9 +87,13 @@ def train_model(month=True, income=True, group_by=None):
         df[f"sales_next_{time_range}_count"] = df["count"].shift(-1)
 
     df.dropna(inplace=True)
-    features = ["income", "count", "month"]  # month
+    if month:
+        features = ["income", "count", "month"]  # month
+    else:
+        features = ["income", "count"]
     imputer = SimpleImputer()
-
+    #import pdb
+    # pdb.set_trace()
     Xtr = imputer.fit_transform(df[features])
     if income:
         ytr = df[f'sales_next_{time_range}']

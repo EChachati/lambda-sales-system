@@ -12,6 +12,7 @@ from sale import serializers
 from moneyed import Money
 from sale.ia import train_model, get_grouped_data
 import pandas as pd
+from datetime import datetime
 
 
 class SaleViewSet(viewsets.ModelViewSet):
@@ -147,7 +148,7 @@ class IAView(APIView):
         :param format: The format of the response
         :return: The predictions for the next year.
         """
-        time_range = 'month' if bool(request.data['month']) else 'year'
+        time_range = 'month' if bool(request.data['by_month']) else 'year'
         model_type = 'income' if bool(request.data['income']) else 'count'
 
         # month, year or None
@@ -159,7 +160,7 @@ class IAView(APIView):
 
         if not model:
             model = train_model(
-                month=bool(request.data['month']),
+                month=bool(request.data['by_month']),
                 income=bool(request.data['income']),
                 group_by=group_by
             )
@@ -179,10 +180,16 @@ class IAView(APIView):
                 d[months_names[i]] = predictions[i]
             return Response(d)
         else:  # NONE
-            # for test use month=true, income=true, group_by=month
-
-            count = df_dict[2022][2]['count']
-            income = df_dict[2022][2]['income']
-            predictions = predict(model, [count], [income])
-
+            if time_range == 'month':
+                month = request.data['month']
+                actual_month = 2
+                year = datetime.now().year
+                count = df_dict[year][actual_month]['count']
+                income = df_dict[year][actual_month]['income']
+                predictions = predict(model, [count], [income], [month])
+            else:
+                predict_df = pd.DataFrame(df_dict[2021])
+                income = sum(predict_df.iloc[0].tolist())
+                count = sum(predict_df.iloc[1].tolist())
+                predictions = predict(model, count=[count], income=[income])
         return Response(predictions)
