@@ -92,8 +92,6 @@ def train_model(month=True, income=True, group_by=None):
     else:
         features = ["income", "count"]
     imputer = SimpleImputer()
-    #import pdb
-    # pdb.set_trace()
     Xtr = imputer.fit_transform(df[features])
     if income:
         ytr = df[f'sales_next_{time_range}']

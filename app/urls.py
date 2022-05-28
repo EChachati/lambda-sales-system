@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/salesman/', include('salesman.urls')),
     path('api/client/', include('client.urls')),
     path('api/sale/', include('sale.urls')),
+    path('api/order/', include('order.urls')),
     path(
         '',
         schema_view.with_ui(

@@ -308,6 +308,94 @@ class Sale(models.Model):
         }
 
 
+class Order(models.Model):
+    class Status(models.TextChoices):
+        PENDING = 'PENDING', _('Pending')
+        PROCESSING = 'PROCESSING', _('Processing')
+        COMPLETED = 'COMPLETED', _('Completed')
+        CANCELLED = 'CANCELLED', _('Cancelled')
+
+    id = models.CharField(max_length=50, unique=True, primary_key=True)
+
+    salesman = models.ForeignKey(
+        Salesman,
+        on_delete=models.RESTRICT
+    )
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.RESTRICT
+    )
+    income = MoneyField(
+        max_digits=12,
+        decimal_places=2,
+        default_currency='USD',
+        default=0.00
+    )
+    product = models.ManyToManyField(
+        Product,
+        through='ProductOrder'
+    )
+    description = models.CharField(max_length=255, blank=True)
+    date = models.DateField(default=datetime.date.today)
+
+    status = models.CharField(
+        max_length=10, choices=Status.choices, default=Status.PENDING
+    )
+
+    def __str__(self):
+        return str(self.id)
+
+    def to_dict(self):
+        """
+        Return a dictionary with the user information
+        """
+        return {
+            'id': self.id,
+            'salesman': self.salesman.to_dict(),
+            'client': self.client.to_dict(),
+            'income': self.income.amount,
+            'product': [product.to_dict() for product in self.product.all()],
+            'description': self.description,
+            'date': self.date,
+            'status': self.status
+        }
+
+
+class OrderSale(models.Model):
+    """
+    Order Sale
+    """
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE
+    )
+    sale = models.ForeignKey(
+        Sale,
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return str(self.order) + ' - ' + str(self.sale)
+
+
+class ProductOrder(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE
+    )
+    quantity = models.IntegerField(default=1)
+    income = MoneyField(
+        max_digits=12,
+        decimal_places=2,
+        default_currency='USD',
+        default=0.00
+    )
+
+
 class ProductSale(models.Model):
     """
     Table in between Products per Sale
