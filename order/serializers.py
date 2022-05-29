@@ -75,7 +75,7 @@ class OrderSerializer(serializers.ModelSerializer):
         return ProductSerializer(
             order.product.all(),
             many=True,
-            context={"order_instance": sale}
+            context={"order_instance": order}
         ).data
 
     class Meta:

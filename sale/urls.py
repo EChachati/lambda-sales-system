@@ -16,5 +16,6 @@ urlpatterns = [
     path('ia', views.IAView.as_view(), name='ia'),
     path('statistic', views.StatisticView.as_view(), name='statistic'),
     path('biggest-sale', views.GetBiggestSale.as_view(), name='biggest-sale'),
+    path('update-ps', views.UpdateProductSale.as_view(), name='update-ps'),
     path('', include(router.urls))
 ]

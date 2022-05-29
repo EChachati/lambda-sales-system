@@ -106,6 +106,24 @@ class CreateProductSaleAPIView(ListCreateAPIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
+class UpdateProductSale(APIView):
+    def post(self, request, *args, **kwargs):
+        sale = Sale.objects.get(pk=request.data[0]['sale'])
+        ProductSale.objects.filter(sale=sale).delete()
+        d = []
+        for data in request.data:
+            sale = Sale.objects.get(pk=data['sale'])
+            product = Product.objects.get(pk=data['product'])
+            ProductSale.objects.create(
+                product=product,
+                sale=sale,
+                income=data['income'],
+                quantity=data['quantity']
+            ).save()
+            d.append(data)
+        return Response(d, status=status.HTTP_200_OK)
+
+
 class GetSalesBySaleman(ListAPIView):
     """It gets all the sales from a salesman and returns them as a list of dictionaries"""
     authentication_classes = (TokenAuthentication,)

@@ -309,11 +309,6 @@ class Sale(models.Model):
 
 
 class Order(models.Model):
-    class Status(models.TextChoices):
-        PENDING = 'PENDING', _('Pending')
-        PROCESSING = 'PROCESSING', _('Processing')
-        COMPLETED = 'COMPLETED', _('Completed')
-        CANCELLED = 'CANCELLED', _('Cancelled')
 
     id = models.CharField(max_length=50, unique=True, primary_key=True)
 
@@ -338,10 +333,6 @@ class Order(models.Model):
     description = models.CharField(max_length=255, blank=True)
     date = models.DateField(default=datetime.date.today)
 
-    status = models.CharField(
-        max_length=10, choices=Status.choices, default=Status.PENDING
-    )
-
     def __str__(self):
         return str(self.id)
 
@@ -356,8 +347,7 @@ class Order(models.Model):
             'income': self.income.amount,
             'product': [product.to_dict() for product in self.product.all()],
             'description': self.description,
-            'date': self.date,
-            'status': self.status
+            'date': self.date
         }
 
 
