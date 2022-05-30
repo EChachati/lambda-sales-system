@@ -5,6 +5,7 @@ from product.serializers import ProductSerializer as OriginalProductSerializer
 from product.serializers import CategorySerializer
 from salesman.serializers import SalesmanSerializer
 from client.serializers import ClientSerializer
+from order.serializers import OrderSerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -92,9 +93,9 @@ class SaleSerializer(serializers.ModelSerializer):
         client = ClientSerializer(value.client)
         try:
             order = Order.objects.get(pk=data['id'])
-            data['order'] = order.to_dict()
+            data['order'] = OrderSerializer(order).data
         except Order.DoesNotExist:
-            data['order'] = []
+            data['order'] = None
         data['salesman'] = salesman.data
         data['client'] = client.data
         return data
