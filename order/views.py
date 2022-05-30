@@ -9,6 +9,7 @@ from moneyed import Money
 from core.models import Order, ProductOrder, OrderSale, SalesmanIndicators, ClientIndicator, Salesman, Client, Sale, Product, ProductSale
 from order import serializers
 from sale.views import SaleViewSet
+from core.utils import apply_query_filters
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -104,8 +105,10 @@ class CreateProductOrderAPIView(ListCreateAPIView):
             data['product'] = Product.objects.get(pk=data['product'])
             data['sale'] = Sale.objects.get(pk=data['sale'])
             data['order'] = Order.objects.get(pk=data['sale'])
-            ps_obj = ProductOrder.objects.create(order=data['order'], product=data['product'], income=data['income'], quantity=data['quantity'])
-            ps = ProductSale.objects.create(sale=data['sale'], product=data['product'], income=data['income'], quantity=data['quantity'])
+            ps_obj = ProductOrder.objects.create(
+                order=data['order'], product=data['product'], income=data['income'], quantity=data['quantity'])
+            ps = ProductSale.objects.create(
+                sale=data['sale'], product=data['product'], income=data['income'], quantity=data['quantity'])
             ps.save()
             ps_created.append(ps_obj.id)
 

@@ -36,7 +36,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        return {**rep, **self.serialize_sale_data(instance)}
+        return {**rep, **self.serialize_order_data(instance)}
 
 
 class ReducedProductOrderSerializer(serializers.ModelSerializer):
