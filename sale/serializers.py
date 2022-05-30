@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Sale, ProductSale, Product
+from core.models import Sale, ProductSale, Product, Order
 
 from product.serializers import ProductSerializer as OriginalProductSerializer
 from product.serializers import CategorySerializer
@@ -90,6 +90,11 @@ class SaleSerializer(serializers.ModelSerializer):
         data = super().to_representation(value)
         salesman = SalesmanSerializer(value.salesman)
         client = ClientSerializer(value.client)
+        try:
+            order = Order.objects.get(pk=data['id'])
+            data['order'] = order.to_dict()
+        except Order.DoesNotExist:
+            data['order'] = []
         data['salesman'] = salesman.data
         data['client'] = client.data
         return data
