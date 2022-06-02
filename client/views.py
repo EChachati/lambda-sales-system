@@ -3,6 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from sklearn.impute import SimpleImputer
 
 from core.models import Client, ClientIndicator
 from core.utils import upload_image, apply_query_filters, predict, load_model
@@ -66,20 +67,16 @@ class IAView(APIView):
         if not model:
             model = train_model(income=bool(request.data['income']))
 
-        data = get_grouped_data(to_dict=True)
-        income, count = [], []
+        data = get_grouped_data()
+        data = data[data['client_id'] == request.data['client_id']]
+        data = data[(data['year'] == 2022) & (data['month'] == 1)]
 
-        try:
-            income.append(data[request.data['client_id']][2022][2]['income'])
-        except KeyError:
-            income.append(0)
+        data.drop(columns=['year', 'name', 'sales_next_month',
+                  'sales_next_month_count'], inplace=True)
 
-        try:
-            count.append(data[request.data['client_id']][2022][2]['count'])
-        except KeyError:
-            count.append(0)
+        imputer = SimpleImputer().fit_transform(data)
+        ret = model.predict(imputer)
 
-        ret = predict(model, income, count)
         return Response(ret, status=status.HTTP_200_OK)
 
 

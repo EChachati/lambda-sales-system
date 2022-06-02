@@ -42,18 +42,34 @@ def get_grouped_data(to_dict=False):
                     'income': row.income, 'count': row.count}
         return d
 
-    return df_sales_per_month
+    df = df_sales_per_month
+    df["sales_next_month"] = df.groupby("salesman_id")["income"].shift(-1)
+    df["sales_next_month_count"] = df.groupby("salesman_id")["count"].shift(-1)
+    df.dropna(inplace=True)
+    df['diff_sales_next_month'] = df.groupby("salesman_id")["income"].diff(1)
+    df['diff_sales_next_month_count'] = df.groupby("salesman_id")[
+        "count"].diff(1)
+    df['last_sale_next_month'] = df.groupby("salesman_id")["income"].shift(1)
+    df['last_sale_next_month_count'] = df.groupby("salesman_id")[
+        "count"].shift(1)
+
+    return df
 
 
 def train_model(income=False):
     df = get_grouped_data()
 
     model_type = 'income' if income else 'count'
-
-    df["sales_next_month"] = df.groupby("salesman_id")["income"].shift(-1)
-    df["sales_next_month_count"] = df.groupby("salesman_id")["count"].shift(-1)
-    df.dropna(inplace=True)
-    features = ["income", "count"]
+    features = [
+        "income",
+        "count",
+        "salesman_id",
+        "month",
+        "diff_sales_next_month",
+        "diff_sales_next_month_count",
+        "last_sale_next_month",
+        "last_sale_next_month_count"
+    ]
     imputer = SimpleImputer()
     Xtr_per_month = imputer.fit_transform(df[features])
 
@@ -61,6 +77,10 @@ def train_model(income=False):
         ytr_per_month = df["sales_next_month"]
     else:
         ytr_per_month = df["sales_next_month_count"]
+
+    print(income)
+    print(Xtr_per_month)
+    print(ytr_per_month)
 
     model = RandomForestRegressor(n_estimators=100)
     model.fit(Xtr_per_month, df["sales_next_month"])
@@ -121,24 +141,30 @@ def sales_realized_per_category(salesman_id=None):
     df_products = pd.read_sql("SELECT * FROM core_product;", conn)
     df_productsales = pd.read_sql("SELECT * FROM core_productsale;", conn)
 
-    df_merged_sales = pd.merge(df_sales, df_productsales, left_on='id', right_on='sale_id', suffixes=('_sale', '_productsales'))
-    df_merged_with_products = pd.merge(df_merged_sales, df_products, left_on='product_id', right_on='id', suffixes=('_sales', '_products'))
-    df_merged_with_categories = pd.merge(df_merged_with_products, df_categories, left_on='category_id', right_on='id', suffixes=('_products', '_categories'))
-    df_final_merged = pd.merge(df_merged_with_categories, df_salesmans, left_on='salesman_id', right_on='id', suffixes=('_categories', '_client'))
+    df_merged_sales = pd.merge(df_sales, df_productsales, left_on='id',
+                               right_on='sale_id', suffixes=('_sale', '_productsales'))
+    df_merged_with_products = pd.merge(
+        df_merged_sales, df_products, left_on='product_id', right_on='id', suffixes=('_sales', '_products'))
+    df_merged_with_categories = pd.merge(df_merged_with_products, df_categories,
+                                         left_on='category_id', right_on='id', suffixes=('_products', '_categories'))
+    df_final_merged = pd.merge(df_merged_with_categories, df_salesmans,
+                               left_on='salesman_id', right_on='id', suffixes=('_categories', '_client'))
     df_final_merged.drop(columns=['date', 'description_sales', 'income_currency_sale', 'status',
-                        'price_1_currency', 'price_2_currency','price_3_currency',
-                        'price_1', 'price_2', 'price_3',
-                        'code', 'identity_card', 'image_client',
-                        'address', 'presentation',
-                        'income_currency_productsales', 'cost',
-                        'brand', 'cost_currency', 'description_products',
-                        'image_categories', 'id', 'id_categories',
-                        'income_sale', 'id_sale', 'id_products',
-                        'client_id'
-                        ], inplace=True)
+                                  'price_1_currency', 'price_2_currency', 'price_3_currency',
+                                  'price_1', 'price_2', 'price_3',
+                                  'code', 'identity_card', 'image_client',
+                                  'address', 'presentation',
+                                  'income_currency_productsales', 'cost',
+                                  'brand', 'cost_currency', 'description_products',
+                                  'image_categories', 'id', 'id_categories',
+                                  'income_sale', 'id_sale', 'id_products',
+                                  'client_id'
+                                  ], inplace=True)
     df_final_merged.set_index(['salesman_id', 'category_id'], inplace=True)
-    df_final_merged['count'] = df_final_merged.groupby(['salesman_id', 'category_id'])['quantity'].sum()
-    df_final_merged['total_income'] = df_final_merged.groupby(['salesman_id', 'category_id'])['income_productsales'].sum()
+    df_final_merged['count'] = df_final_merged.groupby(
+        ['salesman_id', 'category_id'])['quantity'].sum()
+    df_final_merged['total_income'] = df_final_merged.groupby(
+        ['salesman_id', 'category_id'])['income_productsales'].sum()
     df_final_merged.reset_index(inplace=True)
     data = {
         "name_salesman": df_final_merged.groupby(['salesman_id', 'category_id'])['name'].first(),
@@ -148,7 +174,6 @@ def sales_realized_per_category(salesman_id=None):
         "count": df_final_merged.groupby(['salesman_id', 'category_id'])['count'].first(),
         "total_income": df_final_merged.groupby(['salesman_id', 'category_id'])['total_income'].first()
     }
-
 
     df = pd.DataFrame(data)
     df.drop(columns=['category_id', 'salesman_id'], inplace=True)

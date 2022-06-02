@@ -44,7 +44,18 @@ def get_grouped_data(to_dict=False):
                     'income': row.income, 'count': row.count}
         return d
 
-    return df_sales_per_month
+    df = df_sales_per_month
+    df["sales_next_month"] = df.groupby("client_id")["income"].shift(-1)
+    df["sales_next_month_count"] = df.groupby("client_id")["count"].shift(-1)
+    df.dropna(inplace=True)
+    df["diff_sales_next_month"] = df.groupby("client_id")["income"].diff(1)
+    df["diff_sales_next_month_count"] = df.groupby("client_id")[
+        "count"].diff(1)
+    df['last_sale_next_month'] = df.groupby("client_id")['income'].shift(1)
+    df['last_sale_next_month_count'] = df.groupby("client_id")[
+        'count'].shift(1)
+
+    return df
 
 
 def train_model(income=False):
@@ -52,10 +63,17 @@ def train_model(income=False):
 
     model_type = 'income' if income else 'count'
 
-    df["sales_next_month"] = df.groupby("client_id")["income"].shift(-1)
-    df["sales_next_month_count"] = df.groupby("client_id")["count"].shift(-1)
-    df.dropna(inplace=True)
-    features = ["income", "count"]  # , "client_id", "month"]
+    features = [
+        "income",
+        "count",
+        "client_id",
+        "month",
+        "diff_sales_next_month",
+        "diff_sales_next_month_count",
+        "last_sale_next_month",
+        "last_sale_next_month_count"
+    ]
+
     imputer = SimpleImputer()
     Xtr_per_month = imputer.fit_transform(df[features])
 

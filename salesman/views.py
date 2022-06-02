@@ -133,20 +133,20 @@ class IAView(APIView):
         model = load_model(f"salesman_{model_type}_per_month_model")
         if not model:
             model = train_model(income=bool(request.data['income']))
-        data = get_grouped_data(to_dict=True)
-        income, count = [], []
 
-        try:
-            income.append(data[request.data['salesman_id']][2022][2]['income'])
-        except KeyError:
-            income.append(0)
+        data = get_grouped_data()
+        data = data[data['salesman_id'] == request.data['salesman_id']]
+        #data = data[(data['year'] == 2022) & (data['month'] == 1)]
+        print(data)
+        data.drop(columns=['year', 'name', 'sales_next_month',
+                  'sales_next_month_count'], inplace=True)
 
-        try:
-            count.append(data[request.data['salesman_id']][2022][2]['count'])
-        except KeyError:
-            count.append(0)
+        #import pdb
+        # pdb.set_trace()
 
-        ret = predict(model, income, count)
+        imputer = SimpleImputer().fit_transform(data)
+        ret = model.predict(imputer)
+
         return Response(ret, status=status.HTTP_200_OK)
 
 
