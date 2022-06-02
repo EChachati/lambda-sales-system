@@ -124,6 +124,14 @@ class UpdateProductSale(APIView):
         return Response(d, status=status.HTTP_200_OK)
 
 
+class UpdateStatusSale(APIView):
+    def post(self, request, *args, **kwargs):
+        sale = Sale.objects.get(pk=request.data['sale'])
+        sale.status = request.data['status']
+        sale.save()
+        return Response(sale.to_dict(), status=status.HTTP_200_OK)
+
+
 class GetSalesBySaleman(ListAPIView):
     """It gets all the sales from a salesman and returns them as a list of dictionaries"""
     authentication_classes = (TokenAuthentication,)

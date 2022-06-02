@@ -17,5 +17,6 @@ urlpatterns = [
     path('statistic', views.StatisticView.as_view(), name='statistic'),
     path('biggest-sale', views.GetBiggestSale.as_view(), name='biggest-sale'),
     path('update-ps', views.UpdateProductSale.as_view(), name='update-ps'),
+    path('update-status', views.UpdateStatusSale.as_view(), name='update-status'),
     path('', include(router.urls))
 ]
