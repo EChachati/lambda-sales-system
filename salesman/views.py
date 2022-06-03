@@ -136,17 +136,15 @@ class IAView(APIView):
 
         data = get_grouped_data()
         data = data[data['salesman_id'] == request.data['salesman_id']]
-        #data = data[(data['year'] == 2022) & (data['month'] == 1)]
-        print(data)
+        data = data[(data['year'] == 2022) & (data['month'] == 1)]
         data.drop(columns=['year', 'name', 'sales_next_month',
                   'sales_next_month_count'], inplace=True)
 
-        #import pdb
-        # pdb.set_trace()
-
-        imputer = SimpleImputer().fit_transform(data)
-        ret = model.predict(imputer)
-
+        if model_type == 'income':
+            imputer = SimpleImputer().fit_transform(data)
+            ret = model.predict(imputer)
+        else:
+            ret = data['count']
         return Response(ret, status=status.HTTP_200_OK)
 
 
