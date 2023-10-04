@@ -31,7 +31,7 @@ hyperlink==21.0.0
 idna==3.3
 incremental==21.3.0
 inflection==0.5.1
-ipython==8.3.0
+ipython==8.10.0
 itypes==1.2.0
 jedi==0.18.1
 Jinja2==3.0.3
